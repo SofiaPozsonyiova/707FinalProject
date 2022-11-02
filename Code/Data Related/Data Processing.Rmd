@@ -7,10 +7,11 @@ output: html_document
 
 
 ```{r}
-# Reading in Data 
+# Reading in Data and Saving Out
 
 # dat <- read.csv("/Users/sofiapozsonyiova/Downloads/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
 # save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet.RData")
+# save(dat_sub,file = "/Users/sofiapozsonyiova/Downloads/SubsetDat.RData")
 ```
 
 ```{r}
@@ -28,7 +29,6 @@ library(dplyr)
 
 ```{r}
 # names(dat)
-dat$Biosex
 ```
 
 ```{r}
@@ -37,7 +37,11 @@ dat_sub <- dat %>% dplyr::select(P1,P2,Biosex,P5,P7,P8,P11:P14a,P14ab1:P14ab14,P
 
 
 ```{r}
+dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = P28)
+```
 
-save(dat_sub,file = "/Users/sofiapozsonyiova/Downloads/SubsetDat.RData")
+### Collapsing Variables 
+```{r}
+
 ```
 
