@@ -1,0 +1,37 @@
+---
+title: "707 Data Processing"
+author: "Sofia Pozsonyiova"
+date: "11/2/2022"
+output: html_document
+---
+
+
+```{r}
+# Reading in Data 
+
+# dat <- read.csv("/Users/sofiapozsonyiova/Downloads/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
+# save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet.RData")
+```
+
+```{r}
+# Loading Data in 
+
+setwd("/Users/sofiapozsonyiova/Downloads/")
+load("FullDataSet.RData")
+```
+
+
+## Subset data to variables of interest 
+```{r}
+library(dplyr)
+```
+
+```{r}
+# names(dat)
+dat$Biosex
+```
+
+```{r}
+dat_sub <- dat %>% dplyr::select(P1,P2,Biosex,P5,P7,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P56c,P58a:P58c,P59:P67,P69a:P70a,P70c:P71aL1,P74L1a:P71d,P74,P76,P80c:P80g,P80i:P81,P86:P87e,P94,P95,P97a:P99g,Overweight,FiveFV,Binge,Region)
+```
+
