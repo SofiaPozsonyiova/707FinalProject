@@ -25,6 +25,7 @@ load("FullDataSet.RData")
 ## Subset data to variables of interest 
 ```{r}
 library(dplyr)
+library(DataExplorer)
 ```
 
 ```{r}
@@ -41,7 +42,7 @@ dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = P28)
 ```
 
 ### Collapsing Variables 
-```{r}
-
+```{r fig.height= 17, fig.width=12}
+plot_missing(dat_sub_named)
 ```
 
