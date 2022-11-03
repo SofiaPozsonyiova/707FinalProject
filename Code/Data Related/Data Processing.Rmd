@@ -11,14 +11,13 @@ output: html_document
 
 # dat <- read.csv("/Users/sofiapozsonyiova/Downloads/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
 # save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet.RData")
-# save(dat_sub,file = "/Users/sofiapozsonyiova/Downloads/SubsetDat.RData")
+# save(dat_sub_named,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
 ```
 
 ```{r}
 # Loading Data in 
-
 setwd("/Users/sofiapozsonyiova/Downloads/")
-load("FullDataSet.RData")
+load("SubsetDat.RData")
 ```
 
 
@@ -30,19 +29,25 @@ library(ggplot2)
 ```
 
 ```{r}
-# names(dat)
+# dat_sub <- dat %>% dplyr::select(P1,P2,Biosex,P5,P7,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P56c,P58a:P58c,P59:P67,P69a:P70a,P70c:P71aL1,P74L1a:P71d,P74,P76,P80c:P80g,P80i:P81,P86:P87e,P94,P95,P97a:P99g,Overweight,FiveFV,Binge,Region)
 ```
 
 ```{r}
-dat_sub <- dat %>% dplyr::select(P1,P2,Biosex,P5,P7,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P56c,P58a:P58c,P59:P67,P69a:P70a,P70c:P71aL1,P74L1a:P71d,P74,P76,P80c:P80g,P80i:P81,P86:P87e,P94,P95,P97a:P99g,Overweight,FiveFV,Binge,Region)
+# col_names <- names(dat_sub)
+# dat_sub[,col_names] <- lapply(dat_sub[,col_names] , factor)
 ```
 
-
 ```{r}
-dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = as.factor(P28))
+# dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
 ### Exploratory Analysis  
+
+```{r}
+introduce(dat_sub_named)
+```
+
+
 ```{r fig.height= 17, fig.width=12}
 plot_missing(dat_sub_named)
 ```
@@ -50,7 +55,9 @@ plot_missing(dat_sub_named)
 ```{r}
 plot_bar(dat_sub_named)
 ```
-Self-perceived health
+
+Note: Outcome of interest   
+Self-perceived health   
 1	Excellent
 2	Very good
 3	Good
