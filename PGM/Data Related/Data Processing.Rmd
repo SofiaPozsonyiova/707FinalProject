@@ -62,3 +62,15 @@ Self-perceived health
 3	Good
 4	Fair
 5	Poor
+
+
+```{r}
+t <- na.omit(dat_sub_named)
+plot_bar(dat_sub_named$SelfPerceivedHealth)
+plot_bar(t $SelfPerceivedHealth)
+
+dat_sub_named %>% group_by(SelfPerceivedHealth) %>% count()
+t %>% group_by(SelfPerceivedHealth) %>% count()
+```
+
+
