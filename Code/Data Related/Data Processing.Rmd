@@ -26,6 +26,7 @@ load("FullDataSet.RData")
 ```{r}
 library(dplyr)
 library(DataExplorer)
+library(ggplot2)
 ```
 
 ```{r}
@@ -38,11 +39,20 @@ dat_sub <- dat %>% dplyr::select(P1,P2,Biosex,P5,P7,P8,P11:P14a,P14ab1:P14ab14,P
 
 
 ```{r}
-dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = P28)
+dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
-### Collapsing Variables 
+### Exploratory Analysis  
 ```{r fig.height= 17, fig.width=12}
 plot_missing(dat_sub_named)
 ```
 
+```{r}
+plot_bar(dat_sub_named)
+```
+Self-perceived health
+1	Excellent
+2	Very good
+3	Good
+4	Fair
+5	Poor
