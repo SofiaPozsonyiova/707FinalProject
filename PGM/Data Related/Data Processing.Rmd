@@ -39,18 +39,13 @@ dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,
 
 ```{r}
 # Setting variables to be factors
-# col_names <- names(dat_sub)
-# dat_sub[,col_names] <- lapply(dat_sub[,col_names] , factor)
+col_names <- names(dat_sub)
+dat_sub[,col_names] <- lapply(dat_sub[,col_names] , factor)
+str(dat_sub)
 ```
 
 
 ## Exploratory Analysis  
-
-
-```{r}
-# Quick and simple exploratory analysis 
-introduce(dat_sub_named)
-```
 
 ```{r fig.height= 17, fig.width=12}
 # Visualizing Missing 
@@ -193,22 +188,44 @@ P58c	Have any of your parents or guardians ever been in jail or prison? Yes, I h
 # ifelse(P58a == 0 & (P58b == 1 | P58c == 1),1,NA))) %>% dplyr::select(-c(P58a,P58b,P58c))
 ```
 
+### Re-analyzing Subset Data
+```{r}
+cat <- na_removed_dat %>% dplyr::select(-(P2))
+col_names <- names(na_removed_dat)
+na_removed_dat[,col_names] <- lapply(na_removed_dat[,col_names] , factor)
+str(na_removed_dat)
+```
+
 
 ## Splitting Data 
 
-### Validation 
 ```{r}
+set.seed(707)
+sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,0.2))
+```
 
+### Validation 
+n = 10,000
+```{r}
+validation_test <- na_removed_dat[!sample, ]
 ```
 
 ### Training 
-```{r}
+n = 25277
 
+```{r}
+ModelDev  <- na_removed_dat[sample, ]
+sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.63,0.37))
+```
+
+```{r}
+Train <- ModelDev[sample2, ]
 ```
 
 
 ### Testing 
-```{r}
 
+```{r}
+Test <- ModelDev[!sample2, ]
 ```
 
