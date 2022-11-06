@@ -5,7 +5,16 @@ date: "11/2/2022"
 output: html_document
 ---
 
+# Data Creation
 
+```{r}
+# Libraries 
+library(dplyr)
+library(DataExplorer)
+library(ggplot2)
+```
+
+### Reading in / Saving 
 ```{r}
 # Reading in Data and Saving Out
 
@@ -21,29 +30,25 @@ load("SubsetDat.RData")
 ```
 
 
-## Subset data to variables of interest 
+### Subsetting
+
 ```{r}
-library(dplyr)
-library(DataExplorer)
-library(ggplot2)
+# Extracting variables of interest based off of domain knowledge 
+dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
 ```{r}
-dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region)
-```
-
-```{r}
+# Setting variables to be factors
 # col_names <- names(dat_sub)
 # dat_sub[,col_names] <- lapply(dat_sub[,col_names] , factor)
 ```
 
-```{r}
-dat_sub_named <- dat_sub %>% mutate(SelfPerceivedHealth = as.factor(P28))
-```
 
 ### Exploratory Analysis  
 
+
 ```{r}
+# Quick and simple exploratory analysis 
 introduce(dat_sub_named)
 ```
 
@@ -55,22 +60,34 @@ plot_missing(dat_sub_named)
 plot_bar(dat_sub_named)
 ```
 
-Note: Outcome of interest   
-Self-perceived health   
-1	Excellent
-2	Very good
-3	Good
-4	Fair
-5	Poor
-
 
 ```{r}
-t <- na.omit(dat_sub_named)
-plot_bar(dat_sub_named$SelfPerceivedHealth)
-plot_bar(t $SelfPerceivedHealth)
+# Comparing outcome variable if all na removed
+na_removed_dat <- na.omit(dat_sub_named)
+full_dat <- dat_sub_named
 
-dat_sub_named %>% group_by(SelfPerceivedHealth) %>% count()
-t %>% group_by(SelfPerceivedHealth) %>% count()
+# Comparing counts visually 
+plot_bar(full_dat$SelfPerceivedHealth)
+plot_bar(na_removed_dat$SelfPerceivedHealth)
+
+# Checking Proportions within outcome variable numerically 
+na_removed_dat %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+full_dat %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
 ```
+
+
+2 61968	0.364	0.391	
+1	44576	0.262	0.233	
+3	42768	0.251	0.269	
+4	12547	0.074	0.090		
+5	2431	0.014 0.018	
 
 
