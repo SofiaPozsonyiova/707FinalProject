@@ -14,7 +14,7 @@ library(DataExplorer)
 library(ggplot2)
 ```
 
-### Reading in / Saving 
+## Reading in / Saving 
 ```{r}
 # Reading in Data and Saving Out
 
@@ -30,11 +30,11 @@ load("SubsetDat.RData")
 ```
 
 
-### Subsetting
+## Subsetting
 
 ```{r}
 # Extracting variables of interest based off of domain knowledge 
-dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40a:P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
+dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
 ```{r}
@@ -44,7 +44,7 @@ dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,
 ```
 
 
-### Exploratory Analysis  
+## Exploratory Analysis  
 
 
 ```{r}
@@ -53,10 +53,12 @@ introduce(dat_sub_named)
 ```
 
 ```{r fig.height= 17, fig.width=12}
+# Visualizing Missing 
 plot_missing(dat_sub_named)
 ```
 
 ```{r}
+# Visualizing Each Distribution
 plot_bar(dat_sub_named)
 ```
 
@@ -81,13 +83,132 @@ full_dat %>%
   summarise(cnt = n()) %>%
   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
   arrange(desc(freq))
+
+# Proportions: 
+#    n     prop.full prop.red
+# 1	44576	  0.262	      0.233	
+# 2 61968	  0.364	      0.391	
+# 3	42768	  0.251	      0.269	
+# 4	12547	  0.074	      0.090		
+# 5	2431  	0.014       0.018	
+```
+
+## Combining/Redefining Variables  
+
+SelfPerceivedHealth (P28):     
+0 = Great Health 
+1 = Poor or Fair Health
+```{r}
+na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) %>% dplyr::select(-P28)
+```
+
+Diabetes (P42a) or Pre-Diabetes (P42b)
+0 = No
+1 = Yes 
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(Diab_Prediab = ifelse(P42a == 1 & P42b == 1,1,
+# ifelse(P42a == 2 & P42b == 2,0,NA))) %>% dplyr::select(-c(P42a,P42b))
+```
+
+Abusive Relationship 
+P54a:Have you been in a casual or serious relationship where your partner ever physically hurt you on purpose?
+P54b: Have you been in a casual or serious relationship where your partner ever verbally hurt or controlled you? 
+0 = No
+1 = Yes 
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(AbuseRelationship = ifelse(P54a == 1 & P54b == 1,1,
+# ifelse(P54a == 2 & P54b == 2,0,NA))) %>% dplyr::select(-c(P54a,P54b))
+```
+
+Foster Care 
+P56a, Have you ever been in foster care? No
+P56b,Have you ever been in foster care? Yes, during the last year
+P56c,Have you ever been in foster care? Yes, more than a year ago
+0 = No
+1 = Yes 
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(FosterCare = ifelse(P56a == 1 & P56b == 0 & P56c == 0,0,
+# ifelse(P56a == 0 & P56b == 1 | P56c == 1,1,NA))) %>% dplyr::select(-c(P56a,P56b,P56c))
+```
+
+Drug Frequency
+P80c	263	During the last 12 months, on how many occasions (if any) have you used MDMA (E, X, ecstasy, Molly), GHB (G, Liquid E, Liquid X, roofies) or Ketamine (Special K)?
+P80d	264	During the last 12 months, on how many occasions (if any) have you used crack, coke or cocaine in any form?
+P80e	265	During the last 12 months, on how many occasions (if any) have you used heroin (smack, junk, China White)?
+P80f	266	During the last 12 months, on how many occasions (if any) have you used methamphetamine (meth, glass, crank, crystal meth, ice)?
+P80g	267	During the last 12 months, on how many occasions (if any) have you used over-the-counter drugs such as cough syrup, cold medicine or diet pills that you took only to get high?
+P80i	269	During the last 12 months, on how many occasions (if any) have you used any other synthetic drugs such as bath salts (Ivory Wave, White Lightning) that you took only to get high?
+1	= 0 days
+2	= 1 to 2 days
+3	= 3 to 5 days
+4	= 6 to 9 days
+5	= 10 to 19 days
+6	= 20 or more
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 & P80d == 1 & P80e == 1 & P80f == 1 & P80g == 1 & P80i == 1,1,
+# ifelse(P80c == 2 & P80d == 2 & P80e == 2 & P80f == 2 & P80g == 2 & P80i == 2,2,
+# ifelse(P80c == 3 & P80d == 3 & P80e == 3 & P80f == 3 & P80g == 3 & P80i == 3,3,
+# ifelse(P80c == 4 & P80d == 4 & P80e == 4 & P80f == 4 & P80g == 4 & P80i == 4,4,
+# ifelse(P80c == 5 & P80d == 5 & P80e == 5 & P80f == 5 & P80g == 5 & P80i == 5, 5, 
+# ifelse(P80c == 6 & P80d == 6 & P80e == 6 & P80f == 6 & P80g == 6 & P80i == 6,6,NA))))))) %>% dplyr::select(-c(P80c,P80d,P80e,P80f,P80g,P80i))
+```
+
+AlcDrug_Residence
+P59		Do you live with anyone who drinks too much alcohol?
+P60		Do you live with anyone who uses illegal drugs or abuses prescription drugs?
+0 = No
+1 = Yes
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(AlcDrug_Residence = ifelse(P59 == 1 & P60 == 1,1,
+# ifelse(P59 == 2 & P60 == 2,0,NA))) %>% dplyr::select(-c(P59,P60))
+```
+
+Nicotine Freq
+P71a	During the last 30 days, on how many days did you smoke a cigarette?
+P71b 	During the last 30 days, on how many days did you smoke cigars, cigarillos or little cigars?
+P71c	During the last 30 days, on how many days did you use chewing tobacco, snuff or dip?
+1	= 0 days
+2	= 1 to 2 days
+3	= 3 to 9 days
+4	= 10 to 19 days
+5	= 20 to 29 days
+6	= All 30 days
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1 & P71b == 1 & P71c == 1,1,
+# ifelse(P71a == 2 & P71b == 2 & P71c == 2,2,
+# ifelse(P71a == 3 & P71b == 3 & P71c == 3,3,
+# ifelse(P71a == 4 & P71b == 4 & P71c == 4,4,
+# ifelse(P71a == 5 & P71b == 5 & P71c == 5, 5, 
+# ifelse(P71a == 6 & P71b == 6 & P71c == 6,6,NA))))))) %>% dplyr::select(-c(P71a,P71b,P71c))
+```
+
+Imprisoned Parent/Guardian 
+P58a	Have any of your parents or guardians ever been in jail or prison? None of my parents or guardians has ever been in jail or prison
+P58b	Have any of your parents or guardians ever been in jail or prison? Yes, I have a parent or guardian in jail or prison right now
+P58c	Have any of your parents or guardians ever been in jail or prison? Yes, I have had a parent or guardian in jail or prison in the past
+0 = No
+1 = Yes
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(ImprisGaurd = ifelse(P58a == 1 & (P58b == 0 | P58c == 0),0,
+# ifelse(P58a == 0 & (P58b == 1 | P58c == 1),1,NA))) %>% dplyr::select(-c(P58a,P58b,P58c))
 ```
 
 
-2 61968	0.364	0.391	
-1	44576	0.262	0.233	
-3	42768	0.251	0.269	
-4	12547	0.074	0.090		
-5	2431	0.014 0.018	
+## Splitting Data 
 
+### Validation 
+```{r}
+
+```
+
+### Training 
+```{r}
+
+```
+
+
+### Testing 
+```{r}
+
+```
 
