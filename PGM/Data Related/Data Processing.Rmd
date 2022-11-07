@@ -34,14 +34,14 @@ load("SubsetDat.RData")
 
 ```{r}
 # Extracting variables of interest based off of domain knowledge 
-dat_sub <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
+dat_sub_named <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
 ```{r}
 # Setting variables to be factors
-col_names <- names(dat_sub)
-dat_sub[,col_names] <- lapply(dat_sub[,col_names] , factor)
-str(dat_sub)
+col_names <- names(dat_sub_named)
+dat_sub_named[,col_names] <- lapply(dat_sub_named[,col_names] , factor)
+str(dat_sub_named)
 ```
 
 
@@ -97,13 +97,31 @@ SelfPerceivedHealth (P28):
 na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) %>% dplyr::select(-P28)
 ```
 
+```{r}
+na_removed_dat %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+```
+
+
 Diabetes (P42a) or Pre-Diabetes (P42b)
 0 = No
 1 = Yes 
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(Diab_Prediab = ifelse(P42a == 1 & P42b == 1,1,
-# ifelse(P42a == 2 & P42b == 2,0,NA))) %>% dplyr::select(-c(P42a,P42b))
+na_removed_dat <- na_removed_dat %>% mutate(Diab_Prediab = ifelse(P42a == 1 | P42b == 1,1,
+ifelse(P42a == 2 | P42b == 2,0,NA))) %>% dplyr::select(-c(P42a,P42b))
 ```
+
+```{r}
+na_removed_dat %>%
+  group_by(Diab_Prediab) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+```
+
 
 Abusive Relationship 
 P54a:Have you been in a casual or serious relationship where your partner ever physically hurt you on purpose?
@@ -111,8 +129,16 @@ P54b: Have you been in a casual or serious relationship where your partner ever 
 0 = No
 1 = Yes 
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(AbuseRelationship = ifelse(P54a == 1 & P54b == 1,1,
-# ifelse(P54a == 2 & P54b == 2,0,NA))) %>% dplyr::select(-c(P54a,P54b))
+na_removed_dat <- na_removed_dat %>% mutate(AbuseRelationship = ifelse(P54a == 1 | P54b == 1,1,
+ifelse(P54a == 2 | P54b == 2,0,NA))) %>% dplyr::select(-c(P54a,P54b))
+```
+
+```{r}
+na_removed_dat %>%
+  group_by(AbuseRelationship) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
 ```
 
 Foster Care 
@@ -122,8 +148,16 @@ P56c,Have you ever been in foster care? Yes, more than a year ago
 0 = No
 1 = Yes 
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(FosterCare = ifelse(P56a == 1 & P56b == 0 & P56c == 0,0,
-# ifelse(P56a == 0 & P56b == 1 | P56c == 1,1,NA))) %>% dplyr::select(-c(P56a,P56b,P56c))
+na_removed_dat <- na_removed_dat %>% mutate(FosterCare = ifelse(P56a == 1 & P56b == 0 & P56c == 0,0,
+ifelse(P56a == 0 & (P56b == 1 | P56c == 1),1,NA))) %>% dplyr::select(-c(P56a,P56b,P56c))
+```
+
+```{r}
+na_removed_dat %>%
+  group_by(FosterCare) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
 ```
 
 Drug Frequency
