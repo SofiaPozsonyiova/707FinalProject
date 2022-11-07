@@ -148,7 +148,7 @@ P56c,Have you ever been in foster care? Yes, more than a year ago
 0 = No
 1 = Yes 
 ```{r}
-na_removed_dat <- na_removed_dat %>% mutate(FosterCare = ifelse(P56a == 1 & P56b == 0 & P56c == 0,0,
+na_removed_dat <- na_removed_dat %>% mutate(FosterCare = ifelse(P56a == 1 & (P56b == 0 | P56c == 0),0,
 ifelse(P56a == 0 & (P56b == 1 | P56c == 1),1,NA))) %>% dplyr::select(-c(P56a,P56b,P56c))
 ```
 
@@ -310,12 +310,55 @@ P29e	Have you had any of the following dental problems during the past 12 months
 #   arrange(desc(freq))
 ```
 
+Mental Health Self 
+Have you ever been treated for a mental health, emotional or behavioral problem? 
+P35a	Have you ever been treated for a mental health, emotional or behavioral problem? No
+P35b	Have you ever been treated for a mental health, emotional or behavioral problem? Yes, during the last year
+P35c	Have you ever been treated for a mental health, emotional or behavioral problem? Yes, more than a year ago
+0 = No
+1 = Yes 
+```{r}
+na_removed_dat <- na_removed_dat %>% mutate(MentalHealthSelf = ifelse(P35a == 1 & (P35b == 0 | P35c == 0),0,
+ifelse(P35a == 0 & (P35b == 1 | P35c == 1),1,NA))) %>% dplyr::select(-c(P35a,P35b,P35c))
+```
 
+```{r}
+check <- dat_sub_named %>% na.omit() %>% dplyr::select(P35a:P35c)
+check %>% group_by(P35a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P35b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P35c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 
+na_removed_dat %>%
+  group_by(MentalHealthSelf) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+```
 
+Drug/Alcohol Self 
+Have you ever been treated for a drug or alcohol problem? 
+P36a Have you ever been treated for an alcohol or drug problem? No
+P36b Have you ever been treated for an alcohol or drug problem? Yes, during the last year
+P36c Have you ever been treated for an alcohol or drug problem? Yes, more than a year ago
+0 = No
+1 = Yes 
+```{r}
+na_removed_dat <- na_removed_dat %>% mutate(AlcDrugSelf = ifelse(P36a == 1 & (P36b == 0 | P36c == 0),0,
+ifelse(P36a == 0 & (P36b == 1 | P36c == 1),1,NA))) %>% dplyr::select(-c(P36a,P36b,P36c))
+```
 
+```{r}
+check <- dat_sub_named %>% na.omit() %>% dplyr::select(P36a:P36c)
+check %>% group_by(P36a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P36b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P36c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 
-
+na_removed_dat %>%
+  group_by(AlcDrugSelf) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+```
 
 
 ### Re-analyzing Subset Data
