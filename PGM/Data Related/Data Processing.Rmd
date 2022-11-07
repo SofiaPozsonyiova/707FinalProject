@@ -34,7 +34,7 @@ load("SubsetDat.RData")
 
 ```{r}
 # Extracting variables of interest based off of domain knowledge 
-dat_sub_named <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29f,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
+dat_sub_named <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29e,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
 ```
 
 ```{r}
@@ -160,7 +160,7 @@ na_removed_dat %>%
   arrange(desc(freq))
 ```
 
-Drug Frequency
+Drug Frequency 
 P80c	263	During the last 12 months, on how many occasions (if any) have you used MDMA (E, X, ecstasy, Molly), GHB (G, Liquid E, Liquid X, roofies) or Ketamine (Special K)?
 P80d	264	During the last 12 months, on how many occasions (if any) have you used crack, coke or cocaine in any form?
 P80e	265	During the last 12 months, on how many occasions (if any) have you used heroin (smack, junk, China White)?
@@ -174,12 +174,30 @@ P80i	269	During the last 12 months, on how many occasions (if any) have you used
 5	= 10 to 19 days
 6	= 20 or more
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 & P80d == 1 & P80e == 1 & P80f == 1 & P80g == 1 & P80i == 1,1,
-# ifelse(P80c == 2 & P80d == 2 & P80e == 2 & P80f == 2 & P80g == 2 & P80i == 2,2,
-# ifelse(P80c == 3 & P80d == 3 & P80e == 3 & P80f == 3 & P80g == 3 & P80i == 3,3,
-# ifelse(P80c == 4 & P80d == 4 & P80e == 4 & P80f == 4 & P80g == 4 & P80i == 4,4,
-# ifelse(P80c == 5 & P80d == 5 & P80e == 5 & P80f == 5 & P80g == 5 & P80i == 5, 5, 
-# ifelse(P80c == 6 & P80d == 6 & P80e == 6 & P80f == 6 & P80g == 6 & P80i == 6,6,NA))))))) %>% dplyr::select(-c(P80c,P80d,P80e,P80f,P80g,P80i))
+# na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 | P80d == 1 | P80e == 1 | P80f == 1| P80g == 1 | P80i == 1,1,
+# ifelse(P80c == 2 | P80d == 2 | P80e == 2 | P80f == 2 | P80g == 2 | P80i == 2,2,
+# ifelse(P80c == 3 | P80d == 3 | P80e == 3 | P80f == 3 | P80g == 3 | P80i == 3,3,
+# ifelse(P80c == 4 | P80d == 4 | P80e == 4 | P80f == 4 | P80g == 4 | P80i == 4,4,
+# ifelse(P80c == 5 | P80d == 5 | P80e == 5 | P80f == 5 | P80g == 5 | P80i == 5,5,
+# ifelse(P80c == 6 | P80d == 6 | P80e == 6 | P80f == 6 | P80g == 6 | P80i == 6,6,"ERROR"))))))) %>% dplyr::select(-c(P80c,P80d,P80e,P80f,P80g,P80i))
+```
+
+```{r}
+# check <- dat_sub_named%>% na.omit() %>% dplyr::select(P80c,P80d,P80e,P80f,P80g,P80i) 
+# check %>% group_by(P80c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P80d) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P80e) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P80f) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P80g) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P80i) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# 
+# 
+# 
+# na_removed_dat %>%
+#   group_by(DrugFreq) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
 ```
 
 AlcDrug_Residence
@@ -188,9 +206,22 @@ P60		Do you live with anyone who uses illegal drugs or abuses prescription drugs
 0 = No
 1 = Yes
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(AlcDrug_Residence = ifelse(P59 == 1 & P60 == 1,1,
-# ifelse(P59 == 2 & P60 == 2,0,NA))) %>% dplyr::select(-c(P59,P60))
+na_removed_dat <- na_removed_dat %>% mutate(AlcDrug_Residence = ifelse(P59 == 1 | P60 == 1,1,
+ifelse(P59 == 2 | P60 == 2,0,NA))) %>% dplyr::select(-c(P59,P60))
 ```
+
+```{r}
+check <- dat_sub_named %>% na.omit() %>% dplyr::select(P59,P60)
+check %>% group_by(P59) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+check %>% group_by(P60) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+
+na_removed_dat %>%
+  group_by(AlcDrug_Residence) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>%
+  arrange(desc(freq))
+```
+
 
 Nicotine Freq
 P71a	During the last 30 days, on how many days did you smoke a cigarette?
@@ -203,13 +234,27 @@ P71c	During the last 30 days, on how many days did you use chewing tobacco, snuf
 5	= 20 to 29 days
 6	= All 30 days
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1 & P71b == 1 & P71c == 1,1,
-# ifelse(P71a == 2 & P71b == 2 & P71c == 2,2,
-# ifelse(P71a == 3 & P71b == 3 & P71c == 3,3,
-# ifelse(P71a == 4 & P71b == 4 & P71c == 4,4,
-# ifelse(P71a == 5 & P71b == 5 & P71c == 5, 5, 
-# ifelse(P71a == 6 & P71b == 6 & P71c == 6,6,NA))))))) %>% dplyr::select(-c(P71a,P71b,P71c))
+# na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse((P71a == 1 | P71b == 1 | P71c == 1),1,
+# ifelse(P71a == 2 | P71b == 2 | P71c == 2,2,
+# ifelse(P71a == 3 | P71b == 3 | P71c == 3,3,
+# ifelse(P71a == 4 | P71b == 4 | P71c == 4,4,
+# ifelse(P71a == 5 | P71b == 5 | P71c == 5, 5,
+# ifelse(P71a == 6 | P71b == 6 | P71c == 6,6,NA))))))) %>% dplyr::select(-c(P71a,P71b,P71c))
 ```
+
+```{r}
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P71a,P71b,P71c)
+# check %>% group_by(P71a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+# check %>% group_by(P71b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+# check %>% group_by(P71c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+# 
+# na_removed_dat %>%
+#   group_by(NicFreq) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
+```
+
 
 Imprisoned Parent/Guardian 
 P58a	Have any of your parents or guardians ever been in jail or prison? None of my parents or guardians has ever been in jail or prison
@@ -218,9 +263,60 @@ P58c	Have any of your parents or guardians ever been in jail or prison? Yes, I h
 0 = No
 1 = Yes
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(ImprisGaurd = ifelse(P58a == 1 & (P58b == 0 | P58c == 0),0,
-# ifelse(P58a == 0 & (P58b == 1 | P58c == 1),1,NA))) %>% dplyr::select(-c(P58a,P58b,P58c))
+na_removed_dat <- na_removed_dat %>% mutate(ImprisGaurd = ifelse(P58a == 1 & (P58b == 0 | P58c == 0),0,
+ifelse(P58a == 0 & (P58b == 1 | P58c == 1),1,NA))) %>% dplyr::select(-c(P58a,P58b,P58c))
 ```
+
+```{r}
+check <- dat_sub_named %>% na.omit() %>% dplyr::select(P58a,P58b,P58c)
+check %>% group_by(P58a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P58b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+check %>% group_by(P58c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+
+na_removed_dat %>%
+  group_by(ImprisGaurd) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>%
+  arrange(desc(freq))
+```
+
+
+Dental Issues: 
+" Do you have any dental problems?"
+P29a	Have you had any of the following dental problems during the past 12 months? Toothaches or pain
+P29b	Have you had any of the following dental problems during the past 12 months? Decayed teeth or cavities
+P29c	Have you had any of the following dental problems during the past 12 months? Swollen, painful or bleeding gums
+P29d	Have you had any of the following dental problems during the past 12 months? Could not eat certain foods because of a dental problem
+P29e	Have you had any of the following dental problems during the past 12 months? Missed one or more school days because of a dental problem
+0 = No  
+1 = Yes 
+```{r}
+# na_removed_dat <- na_removed_dat %>% mutate(DentalIssues = ifelse(P29a == 0 | P29b == 0|P29c == 0| P29d == 0|  P29e == 0,0,
+# ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1|  P29e == 1,1,NA))) %>% dplyr::select(-c(P29a:P29f))
+```
+
+```{r}
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P29a:P29f)
+# check %>% group_by(P29a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P29b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P29b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P29d) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P29e) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# 
+# na_removed_dat %>%
+#   group_by(DentalIssues) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
+```
+
+
+
+
+
+
+
+
 
 ### Re-analyzing Subset Data
 ```{r}
