@@ -173,13 +173,13 @@ P80i	269	During the last 12 months, on how many occasions (if any) have you used
 4	= 6 to 9 days
 5	= 10 to 19 days
 6	= 20 or more
+
+In the last 30 days have you utilized any hard drugs? 
+0 = No
+1 = Yes
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 | P80d == 1 | P80e == 1 | P80f == 1| P80g == 1 | P80i == 1,1,
-# ifelse(P80c == 2 | P80d == 2 | P80e == 2 | P80f == 2 | P80g == 2 | P80i == 2,2,
-# ifelse(P80c == 3 | P80d == 3 | P80e == 3 | P80f == 3 | P80g == 3 | P80i == 3,3,
-# ifelse(P80c == 4 | P80d == 4 | P80e == 4 | P80f == 4 | P80g == 4 | P80i == 4,4,
-# ifelse(P80c == 5 | P80d == 5 | P80e == 5 | P80f == 5 | P80g == 5 | P80i == 5,5,
-# ifelse(P80c == 6 | P80d == 6 | P80e == 6 | P80f == 6 | P80g == 6 | P80i == 6,6,"ERROR"))))))) %>% dplyr::select(-c(P80c,P80d,P80e,P80f,P80g,P80i))
+na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 | P80d == 1 | P80e == 1 | P80f == 1 |P80g == 1 |P80i == 1,0,
+ ifelse(P80c != 1 | P80d != 1 | P80e != 1 | P80f != 1 |P80g != 1 |P80i != 1,1,NA))) %>% dplyr::select(-c(P80c,P80d,P80e,P80f,P80g,P80i))
 ```
 
 ```{r}
@@ -193,11 +193,11 @@ P80i	269	During the last 12 months, on how many occasions (if any) have you used
 # 
 # 
 # 
-# na_removed_dat %>%
-#   group_by(DrugFreq) %>%
-#   summarise(cnt = n()) %>%
-#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
-#   arrange(desc(freq))
+na_removed_dat %>%
+  group_by(DrugFreq) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>%
+  arrange(desc(freq))
 ```
 
 AlcDrug_Residence
@@ -233,13 +233,12 @@ P71c	During the last 30 days, on how many days did you use chewing tobacco, snuf
 4	= 10 to 19 days
 5	= 20 to 29 days
 6	= All 30 days
+
+In the last 30 days have you used any nicotine? 
+0 = No
+1 = Yes
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse((P71a == 1 | P71b == 1 | P71c == 1),1,
-# ifelse(P71a == 2 | P71b == 2 | P71c == 2,2,
-# ifelse(P71a == 3 | P71b == 3 | P71c == 3,3,
-# ifelse(P71a == 4 | P71b == 4 | P71c == 4,4,
-# ifelse(P71a == 5 | P71b == 5 | P71c == 5, 5,
-# ifelse(P71a == 6 | P71b == 6 | P71c == 6,6,NA))))))) %>% dplyr::select(-c(P71a,P71b,P71c))
+na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1| P71b == 1| P71c == 1,0,  )) %>% dplyr::select(-c(P71a,P71b,P71c))
 ```
 
 ```{r}
@@ -287,12 +286,12 @@ P29a	Have you had any of the following dental problems during the past 12 months
 P29b	Have you had any of the following dental problems during the past 12 months? Decayed teeth or cavities
 P29c	Have you had any of the following dental problems during the past 12 months? Swollen, painful or bleeding gums
 P29d	Have you had any of the following dental problems during the past 12 months? Could not eat certain foods because of a dental problem
-P29e	Have you had any of the following dental problems during the past 12 months? Missed one or more school days because of a dental problem
+
 0 = No  
 1 = Yes 
 ```{r}
-# na_removed_dat <- na_removed_dat %>% mutate(DentalIssues = ifelse(P29a == 0 | P29b == 0|P29c == 0| P29d == 0|  P29e == 0,0,
-# ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1|  P29e == 1,1,NA))) %>% dplyr::select(-c(P29a:P29f))
+na_removed_dat <- na_removed_dat %>% mutate(DentalIssues = ifelse(P29a == 0 | P29b == 0|P29c == 0| P29d == 0,0,
+ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1,1,NA))) %>% dplyr::select(-c(P29a:P29e))
 ```
 
 ```{r}
@@ -303,11 +302,11 @@ P29e	Have you had any of the following dental problems during the past 12 months
 # check %>% group_by(P29d) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 # check %>% group_by(P29e) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 # 
-# na_removed_dat %>%
-#   group_by(DentalIssues) %>%
-#   summarise(cnt = n()) %>%
-#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
-#   arrange(desc(freq))
+na_removed_dat %>%
+  group_by(DentalIssues) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>%
+  arrange(desc(freq))
 ```
 
 Mental Health Self 
