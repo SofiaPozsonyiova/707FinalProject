@@ -240,7 +240,8 @@ In the last 30 days have you used any nicotine (not including vape)?
 0 = No
 1 = Yes
 ```{r}
-na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1| P71b == 1| P71c == 1,0,  )) %>% dplyr::select(-c(P71a,P71b,P71c))
+na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1| P71b == 1| P71c == 1,0,
+ifelse(P71a != 1| P71b != 1| P71c != 1,1,NA))) %>% dplyr::select(-c(P71a,P71b,P71c))
 ```
 
 ```{r}
