@@ -41,7 +41,9 @@ dat_sub_named <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P1
 # Setting variables to be factors
 col_names <- names(dat_sub_named)
 dat_sub_named[,col_names] <- lapply(dat_sub_named[,col_names] , factor)
-str(dat_sub_named)
+
+# QC:
+# str(dat_sub_named)
 ```
 
 
@@ -79,6 +81,7 @@ full_dat %>%
   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
   arrange(desc(freq))
 
+# QC:
 # Proportions: 
 #    n     prop.full prop.red
 # 1	44576	  0.262	      0.233	
@@ -98,11 +101,12 @@ na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPer
 ```
 
 ```{r}
-na_removed_dat %>%
-  group_by(SelfPerceivedHealth) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# na_removed_dat %>%
+#   group_by(SelfPerceivedHealth) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 
@@ -115,11 +119,12 @@ ifelse(P42a == 2 | P42b == 2,0,NA))) %>% dplyr::select(-c(P42a,P42b))
 ```
 
 ```{r}
-na_removed_dat %>%
-  group_by(Diab_Prediab) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# na_removed_dat %>%
+#   group_by(Diab_Prediab) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 
@@ -134,11 +139,12 @@ ifelse(P54a == 2 | P54b == 2,0,NA))) %>% dplyr::select(-c(P54a,P54b))
 ```
 
 ```{r}
-na_removed_dat %>%
-  group_by(AbuseRelationship) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# na_removed_dat %>%
+#   group_by(AbuseRelationship) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 Foster Care 
@@ -153,11 +159,12 @@ ifelse(P56a == 0 & (P56b == 1 | P56c == 1),1,NA))) %>% dplyr::select(-c(P56a,P56
 ```
 
 ```{r}
-na_removed_dat %>%
-  group_by(FosterCare) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# na_removed_dat %>%
+#   group_by(FosterCare) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 Drug Frequency 
@@ -183,21 +190,15 @@ na_removed_dat <- na_removed_dat %>% mutate(DrugFreq = ifelse(P80c == 1 | P80d =
 ```
 
 ```{r}
+# QC:
 # check <- dat_sub_named%>% na.omit() %>% dplyr::select(P80c,P80d,P80e,P80f,P80g,P80i) 
 # check %>% group_by(P80c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# check %>% group_by(P80d) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# check %>% group_by(P80e) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# check %>% group_by(P80f) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# check %>% group_by(P80g) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# check %>% group_by(P80i) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-# 
-# 
-# 
-na_removed_dat %>%
-  group_by(DrugFreq) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>%
-  arrange(desc(freq))
+
+# na_removed_dat %>%
+#   group_by(DrugFreq) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
 ```
 
 AlcDrug_Residence
@@ -211,15 +212,16 @@ ifelse(P59 == 2 | P60 == 2,0,NA))) %>% dplyr::select(-c(P59,P60))
 ```
 
 ```{r}
-check <- dat_sub_named %>% na.omit() %>% dplyr::select(P59,P60)
-check %>% group_by(P59) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
-check %>% group_by(P60) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
-
-na_removed_dat %>%
-  group_by(AlcDrug_Residence) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>%
-  arrange(desc(freq))
+# QC:
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P59,P60)
+# check %>% group_by(P59) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+# check %>% group_by(P60) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
+# 
+# na_removed_dat %>%
+#   group_by(AlcDrug_Residence) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
 ```
 
 
@@ -242,11 +244,12 @@ na_removed_dat <- na_removed_dat %>% mutate(NicFreq = ifelse(P71a == 1| P71b == 
 ```
 
 ```{r}
+# QC:
 # check <- dat_sub_named %>% na.omit() %>% dplyr::select(P71a,P71b,P71c)
 # check %>% group_by(P71a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
 # check %>% group_by(P71b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
 # check %>% group_by(P71c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq)) 
-# 
+
 # na_removed_dat %>%
 #   group_by(NicFreq) %>%
 #   summarise(cnt = n()) %>%
@@ -267,16 +270,17 @@ ifelse(P58a == 0 & (P58b == 1 | P58c == 1),1,NA))) %>% dplyr::select(-c(P58a,P58
 ```
 
 ```{r}
-check <- dat_sub_named %>% na.omit() %>% dplyr::select(P58a,P58b,P58c)
-check %>% group_by(P58a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P58b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P58c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-
-na_removed_dat %>%
-  group_by(ImprisGaurd) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>%
-  arrange(desc(freq))
+# QC:
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P58a,P58b,P58c)
+# check %>% group_by(P58a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P58b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P58c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# 
+# na_removed_dat %>%
+#   group_by(ImprisGaurd) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
 ```
 
 
@@ -295,6 +299,7 @@ ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1,1,NA))) %>% dplyr::select(-c(P2
 ```
 
 ```{r}
+# QC:
 # check <- dat_sub_named %>% na.omit() %>% dplyr::select(P29a:P29f)
 # check %>% group_by(P29a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 # check %>% group_by(P29b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
@@ -302,11 +307,11 @@ ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1,1,NA))) %>% dplyr::select(-c(P2
 # check %>% group_by(P29d) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 # check %>% group_by(P29e) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
 # 
-na_removed_dat %>%
-  group_by(DentalIssues) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>%
-  arrange(desc(freq))
+# na_removed_dat %>%
+#   group_by(DentalIssues) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>%
+#   arrange(desc(freq))
 ```
 
 Mental Health Self 
@@ -322,16 +327,17 @@ ifelse(P35a == 0 & (P35b == 1 | P35c == 1),1,NA))) %>% dplyr::select(-c(P35a,P35
 ```
 
 ```{r}
-check <- dat_sub_named %>% na.omit() %>% dplyr::select(P35a:P35c)
-check %>% group_by(P35a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P35b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P35c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-
-na_removed_dat %>%
-  group_by(MentalHealthSelf) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P35a:P35c)
+# check %>% group_by(P35a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P35b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P35c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# 
+# na_removed_dat %>%
+#   group_by(MentalHealthSelf) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 Drug/Alcohol Self 
@@ -347,16 +353,17 @@ ifelse(P36a == 0 & (P36b == 1 | P36c == 1),1,NA))) %>% dplyr::select(-c(P36a,P36
 ```
 
 ```{r}
-check <- dat_sub_named %>% na.omit() %>% dplyr::select(P36a:P36c)
-check %>% group_by(P36a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P36b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-check %>% group_by(P36c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
-
-na_removed_dat %>%
-  group_by(AlcDrugSelf) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# check <- dat_sub_named %>% na.omit() %>% dplyr::select(P36a:P36c)
+# check %>% group_by(P36a) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P36b) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# check %>% group_by(P36c) %>% summarise(cnt = n()) %>% mutate(freq = round(cnt / sum(cnt), 3)) %>%  arrange(desc(freq))
+# 
+# na_removed_dat %>%
+#   group_by(AlcDrugSelf) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 
@@ -367,12 +374,14 @@ P52c	Have you ever seriously considered attempting suicide? Yes, more than a yea
 ```{r}
 na_removed_dat <- na_removed_dat %>% mutate(Suicide = ifelse(P52a == 1 & (P52b == 0 | P52c == 0),0, ifelse(P52a == 0 & (P52b == 1 | P52c == 1),1,NA))) %>% dplyr::select(-c(P52a,P52b,P52c))
 ```
+
 ```{r}
-na_removed_dat %>%
-  group_by(Suicide) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
+# QC:
+# na_removed_dat %>%
+#   group_by(Suicide) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
 ```
 
 
@@ -386,7 +395,8 @@ na_removed_dat %>%
 cat <- na_removed_dat %>% dplyr::select(-(P2))
 col_names <- names(na_removed_dat)
 na_removed_dat[,col_names] <- lapply(na_removed_dat[,col_names] , factor)
-str(na_removed_dat)
+# QC:
+# str(na_removed_dat)
 ```
 
 
@@ -408,7 +418,8 @@ n = 25277
 
 ```{r}
 ModelDev  <- na_removed_dat[sample, ]
-sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.63,0.37))
+#sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.63,0.37))
+sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.70,0.30))
 ```
 
 ```{r}
@@ -420,5 +431,12 @@ Train <- ModelDev[sample2, ]
 
 ```{r}
 Test <- ModelDev[!sample2, ]
+```
+
+### Saving out 
+```{r}
+save(validation_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ValidationTest.RData")
+save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
+save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")
 ```
 
