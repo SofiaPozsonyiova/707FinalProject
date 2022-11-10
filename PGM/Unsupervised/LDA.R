@@ -47,3 +47,6 @@ plot(perf)
 auc.tmp <- performance(pred, "auc")
 auc <- as.numeric(auc.tmp@y.values)
 print(auc)
+
+# Run logistic regression model
+glm(SelfPerceivedHealth ~ ., data=Train, family="binomial")
