@@ -1,3 +1,15 @@
+---
+title: "Clustering"
+output: html_document
+date: "2022-11-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
 library(tidyverse)
 library(ggplot2)
 library(lubridate)
@@ -10,7 +22,11 @@ library(factoextra)
 library(readr)
 library(gmodels)
 library(DataExplorer)
+```
 
+
+
+```{r}
 setwd("/Users/sdm98/Documents/GitHub/707FinalProject")
 load("/Users/sdm98/Documents/GitHub/Private707/data/ModelDev_Train.RData")
 
@@ -31,6 +47,10 @@ summary(Train_standardized)
 #table(cutree(clus1, k=2), Train$SelfPerceivedHealth)
 
 #Perform clustering on specific groups of variables and label clusters by self-perceived health
+```
+
+
+```{r}
 
 #Physical Health Related
 phys_health <- Train_standardized %>% 
@@ -118,6 +138,10 @@ phys_prop <- 100*phys_crosstab$prop.col
       grid.arrange(phys_binary, phys_5, nrow = 1, ncol = 2)
 
 
+```
+
+
+```{r}
 
 #Psychological Health Related
 psych_health <- Train_standardized %>%
@@ -174,6 +198,12 @@ fviz_cluster(psych_health_clus, psych_health, geom = 'point', main = 'Clusters w
         scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2', limits = c(2, 1))
       
       grid.arrange(psych_binary, psych_5, nrow = 1, ncol = 2)
+
+```
+
+
+
+```{r}
 
 #Social Support Related
 social <- Train_standardized %>%
@@ -280,6 +310,13 @@ fviz_cluster(subset_clus, psych_health, geom = 'point', main = 'Clusters with co
 
 
 
+
+```
+
+
+
+```{r}
+
 #Find misclassified subjects
 
 miss <- subset[Train$SelfPerceivedHealth != subset_clus$cluster,]
@@ -287,12 +324,4 @@ plot_bar(miss)
 same <- subset[Train$SelfPerceivedHealth == subset_clus$cluster,]
 plot_bar(same)
 
-
-
-# pca
-pco <- princomp(subset)
-summary(pco)
-
-sd <- pco$sdev
-
-screeplot(pco, type = c("lines"), main = "Scree Plot")
+```
