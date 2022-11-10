@@ -208,11 +208,30 @@ PCA - 30 variables
 - Look at the observations in overlapping region to see if specific variables are dominating overlap and then may want to remove or add from another category. 
 - Are the people in the overlapping groups are they the same people? 
 - Once we figure out if group of people in overlapping regions the same, are there are certain variables that distinguish the groups? Consider making aggregate metrics so create a binary label. 
+- Figure out boundaries of the cluster and where do they overlap
 
-
+Random Forest 
 LDA model
 Logistic Regression (If we assume linear relationship, so try it and see how it is and if it performs well then we can assume linear relationship)
-Random Forest 
+Spline or GAM 
+
+
+CLUSTER: 
+code is going to run on the DCC
+myCommand.sh
+# Bin/bash 
+-> memory and such 
+-> will call on script.r
+myScript.R
+
+Standard R Script 
+- read.csv(Path you will need to change to cluster path where data stored)
+- at the end of script print what we need and put it in the folder that we need 
+
+sftp get graph.pdf 
+
+Go on dcc and say 
+myCommand.sh
 
 
 
