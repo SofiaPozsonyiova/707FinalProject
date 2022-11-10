@@ -97,7 +97,7 @@ SelfPerceivedHealth (P28):
 0 = Great Health 
 1 = Poor or Fair Health
 ```{r}
-na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) %>% dplyr::select(-P28)
+na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) 
 ```
 
 ```{r}
