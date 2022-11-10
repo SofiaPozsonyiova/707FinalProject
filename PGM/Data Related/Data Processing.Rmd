@@ -388,16 +388,20 @@ na_removed_dat <- na_removed_dat %>% mutate(Suicide = ifelse(P52a == 1 & (P52b =
 
 
 
+## Variable Transformation 
 
 
 
-### Re-analyzing Subset Data
 ```{r}
-cat <- na_removed_dat %>% dplyr::select(-(P2))
-col_names <- names(na_removed_dat)
-na_removed_dat[,col_names] <- lapply(na_removed_dat[,col_names] , factor)
-# QC:
-# str(na_removed_dat)
+factor_vars <- na_removed_dat %>% dplyr::select(c(P1,P2,Biosex,P5,P8,P11,P12,P13,P14ab1,P14ab2,P14ab3,P14ab4,P14ab5,P14ab6,P14ab7,P14ab8,P14ab9,P14ab10,P14ab11,P14ab12,P14ab13,P14ab14,P25,P34,P38,P39a,P42c,P42d,P61:P66,FiveFV,Region,AbuseRelationship,SelfPerceivedHealth,Diab_Prediab,FosterCare,DrugFreq,AlcDrug_Residence,NicFreq,ImprisGaurd,DentalIssues,MentalHealthSelf,AlcDrugSelf,Suicide))
+numeric_vars <- na_removed_dat %>% dplyr::select(c(P14a,P15,P16a:P18d,P20a:P23e,P26a:P28,P30,P37,P40d:P41g,P45:P50d,P70a:P86,Binge))
+  
+fac_col_names <- names(factor_vars)
+num_col_names <- names(numeric_vars)
+
+na_removed_dat[,fac_col_names] <- lapply(na_removed_dat[,fac_col_names] , as.factor)
+
+na_removed_dat[,num_col_names] <- lapply(na_removed_dat[,num_col_names] , as.numeric)
 ```
 
 
