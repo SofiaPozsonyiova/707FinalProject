@@ -8,6 +8,8 @@ library(corrplot)
 library(ggfortify)
 library(factoextra)
 library(readr)
+library(gmodels)
+library(DataExplorer)
 
 setwd("/Users/sdm98/Documents/GitHub/707FinalProject")
 load("/Users/sdm98/Documents/GitHub/Private707/data/ModelDev_Train.RData")
@@ -57,10 +59,10 @@ phys_health <- Train_standardized %>%
                     P39a,
                     
                     #fast food, soda, sports drinks, energy drinks,
-                    P40d, P41b, P41c, P41d, 
+                    #P40d, P41b, P41c, P41d, 
                     
                     #sweetened coffee/tea, water
-                    P41e, P41g,
+                    #P41e, P41g,
                     
                     #asthma, allergy w/ epi pen, hours of sleep/nigh
                     P42c, P42d, P45, 
@@ -72,23 +74,48 @@ phys_health <- Train_standardized %>%
                     DrugFreq, NicFreq, DentalIssues))
 
 
-phys_health_clus2 <- kmeans(phys_health, centers = 2, nstart = 10)
+phys_health_clus <- kmeans(phys_health, centers = 2, nstart = 10)
 
 #Compare with fruit/vegetable consumption
-table(phys_health_clus2$cluster, Train$FiveFV)
+table(phys_health_clus$cluster, Train$FiveFV)
 
 #Compare with Diab/Prediab
-table(phys_health_clus2$cluster, Train$Diab_Prediab)
+table(phys_health_clus$cluster, Train$Diab_Prediab)
 
 #Compare with long term disability
-table(phys_health_clus2$cluster, Train$P33)
+table(phys_health_clus$cluster, Train$P33)
 
 #No clear cluster relationship for good/bad physical health
 
 
 #compare with self-perceived health 1 = good 2 = bad
 table(phys_health_clus2$cluster, Train$SelfPerceivedHealth)
-fviz_cluster(phys_health_clus2, phys_health)
+fviz_cluster(phys_health_clus2, phys_health, geom = 'point', main = 'Clusters with physical health')
+
+phys_crosstab <- CrossTable(phys_health_clus$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
+phys_prop <- 100*phys_crosstab$prop.col
+
+
+      phys_binary <- ggplot(phys_prop, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Physical Health Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2', limits = c(2, 1))
+      
+      phys_crosstab_5 <- CrossTable(phys_health_clus$cluster, Train$P28, prop.chisq = FALSE)
+      phys_prop_5 <- 100*phys_crosstab_5$prop.col
+      
+      
+      phys_5 <- ggplot(phys_prop_5, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Physical Health Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2', limits = c(2, 1))
+      
+      
+      grid.arrange(phys_binary, phys_5, nrow = 1, ncol = 2)
 
 
 
@@ -122,9 +149,32 @@ table(psych_health_clus$cluster, Train$SelfPerceivedHealth)
   #2 = good, 1 = bad?
 
 #create visualization
-fviz_cluster(psych_health_clus, psych_health)
+#add better labels ######################### remove obs numbers, want to see boundary
+fviz_cluster(psych_health_clus, psych_health, geom = 'point', main = 'Clusters with psychological health')
 
-
+      psych_crosstab <- CrossTable(psych_health_clus$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
+      psych_prop <- 100*psych_crosstab$prop.col
+      
+      
+      psych_binary <- ggplot(psych_prop, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2', limits = c(2, 1))
+      
+      psych_crosstab_5 <- CrossTable(psych_health_clus$cluster, Train$P28, prop.chisq = FALSE)
+      psych_prop_5 <- 100*psych_crosstab_5$prop.col
+      
+      
+      psych_5 <- ggplot(psych_prop_5, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2', limits = c(2, 1))
+      
+      grid.arrange(psych_binary, psych_5, nrow = 1, ncol = 2)
 
 #Social Support Related
 social <- Train_standardized %>%
@@ -168,4 +218,82 @@ table(social_clus$cluster, Train$P47a)
 
 #this may suggest cluster 2 = bad social support and cluster 1 = good social support
 
-fviz_cluster(social_clus, psych_health)
+fviz_cluster(social_clus, social, geom = 'point', main = 'Clusters with social support')
+
+      
+      social_crosstab <- CrossTable(social_clus$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
+      social_prop <- 100*social_crosstab$prop.col
+      
+      
+      soc_binary <- ggplot(social_prop, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Social Support Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2')
+      
+      social_crosstab_5 <- CrossTable(social_clus$cluster, Train$P28, prop.chisq = FALSE)
+      social_prop_5 <- 100*social_crosstab_5$prop.col
+      
+      
+      soc_5 <- ggplot(social_prop_5, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Social Support Cluster in Self-Perceived Health Groups") + 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'), palette = 'Set2')
+      
+      
+      grid.arrange(soc_binary, soc_5, nrow = 1, ncol = 2)
+
+#run all together
+
+subset <- as.data.frame(c(social, psych_health, phys_health))
+subset_clus <- kmeans(subset, centers = 2, nstart = 10)
+table(subset_clus$cluster, Train$SelfPerceivedHealth)
+fviz_cluster(subset_clus, psych_health, geom = 'point', main = 'Clusters with combination of categories')
+
+      subset_crosstab <- CrossTable(subset_clus$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
+      propcol <- 100*subset_crosstab$prop.col
+      
+      
+      subset_binary <- ggplot(propcol, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2')
+      
+      
+      subset_crosstab_5 <- CrossTable(subset_clus$cluster, Train$P28, prop.chisq = FALSE)
+      subset_prop_5 <- 100*subset_crosstab_5$prop.col
+      
+      
+      subset_5 <- ggplot(subset_prop_5, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2')
+      
+      
+      grid.arrange(subset_binary, subset_5, nrow = 1, ncol = 2)
+
+
+
+#Find misclassified subjects
+
+miss <- subset[Train$SelfPerceivedHealth != subset_clus$cluster,]
+plot_bar(miss)
+same <- subset[Train$SelfPerceivedHealth == subset_clus$cluster,]
+plot_bar(same)
+
+
+
+# pca
+pco <- princomp(subset)
+summary(pco)
+
+sd <- pco$sdev
+
+screeplot(pco, type = c("lines"), main = "Scree Plot")
