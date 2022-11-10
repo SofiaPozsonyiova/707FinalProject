@@ -90,15 +90,6 @@ table(phys_health_clus2$cluster, Train$P33)
 table(phys_health_clus2$cluster, Train$SelfPerceivedHealth)
 fviz_cluster(phys_health_clus2, phys_health)
 
-#check full sel-per health variable with 5, 4, and 3 clusters
-phys_health_clus5 <- kmeans(phys_health, centers = 5, nstart = 10)
-table(phys_health_clus5$cluster, Train$P28)
-
-phys_health_clus4 <- kmeans(phys_health, centers = 4, nstart = 10)
-table(phys_health_clus4$cluster, Train$P28)
-
-phys_health_clus3 <- kmeans(phys_health, centers = 3, nstart = 10)
-table(phys_health_clus3$cluster, Train$P28)
 
 
 #Psychological Health Related
@@ -133,17 +124,7 @@ table(psych_health_clus$cluster, Train$SelfPerceivedHealth)
 #create visualization
 fviz_cluster(psych_health_clus, psych_health)
 
-#check full self-perceived health variable with 5, 4, and 3 clusters
-psych_health_clus5 <- kmeans(psych_health, centers = 5, nstart = 10)
-table(psych_health_clus5$cluster, Train$P28)
 
-psych_health_clus4 <- kmeans(psych_health, centers = 4, nstart = 10)
-table(psych_health_clus4$cluster, Train$P28)
-
-psych_health_clus3 <- kmeans(psych_health, centers = 3, nstart = 10)
-table(psych_health_clus3$cluster, Train$P28)
-
-fviz_cluster(psych_health_clus3, psych_health)
 
 #Social Support Related
 social <- Train_standardized %>%
@@ -188,14 +169,3 @@ table(social_clus$cluster, Train$P47a)
 #this may suggest cluster 2 = bad social support and cluster 1 = good social support
 
 fviz_cluster(social_clus, psych_health)
-
-#check full self-per health var with 5, 4, and 3 clusters
-social_clus5 <- kmeans(social, centers = 5, nstart = 20)
-table(social_clus5$cluster, Train$P28)
-
-social_clus4 <- kmeans(social, centers = 4, nstart = 10)
-table(social_clus4$cluster, Train$P28)
-
-social_clus3 <- kmeans(social, centers = 3, nstart = 10)
-table(social_clus3$cluster, Train$P28)
-  #maybe clusters 2 and 3 = bad perceived health and 1 = good/okay perceived health
