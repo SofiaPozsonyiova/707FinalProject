@@ -1,0 +1,228 @@
+---
+title: "Predictive Modeling"
+author: "Sofia Pozsonyiova"
+date: "11/10/2022"
+output: html_document
+---
+
+Change variables to be ordered variables so convert 1-5 to be numeric and 0/1 to be factor binary. 
+
+
+
+```{r}
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
+```
+
+```{r}
+library(caret)
+library(dplyr)
+
+Train <- Train %>% dplyr::select(-P28)
+col_names <- names(Train)
+test_lasso <- Train
+test_lasso[,col_names] <- lapply(test_lasso[,col_names] , as.numeric)
+test_lasso$SelfPerceivedHealth <- as.factor(test_lasso$SelfPerceivedHealth)
+```
+
+
+```{r}
+set.seed(707)
+
+lambda_grid <- 10^seq(-3, 1, length = 100)
+
+# Perform LASSO
+lasso_model <- train(
+     SelfPerceivedHealth ~ .,
+    data = test_lasso,
+    method = "glmnet",
+    tuneGrid = data.frame(alpha = 1, lambda = 0.001321941	),
+    trControl = trainControl(method = "cv", number = 10),
+    na.action = na.omit)
+
+```
+
+```{r}
+# CV RMSE, R^2, MAE metrics for each LASSO model
+lasso_model$results
+
+# Plot metrics for each LASSO model
+plot(lasso_model)
+```
+
+
+```{r}
+# Identify which tuning parameter (ie. lambda) is "best" 
+opt_lambda <- lasso_model$bestTune
+
+# Obtain the predictors & coefficients of the "best" model 
+coef(lasso_model$finalModel, lasso_model$bestTune$lambda)
+
+# Get CV measurements for the "best" model
+lasso_model$resample
+
+
+```
+
+
+ RANDOM FOREST 
+ 
+```{r}
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(caret)
+library(rpart)        # for building trees
+library(rpart.plot)   # for plotting trees
+library(class)        # for the instructor's plotting functions
+library(randomForest) # for bagging & forests
+library(infer)
+```
+ 
+```{r}
+equal_sample_self <- Train %>% group_by(SelfPerceivedHealth) %>% sample_frac(.3)
+```
+ 
+```{r}
+forest_model <- train(
+  SelfPerceivedHealth ~ .,
+  data = equal_sample_self,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(12, 64)),
+  trControl = trainControl(method = "oob"),
+  metric = "Accuracy",
+  na.action = na.omit)
+```
+
+```{r}
+plot(forest_model)
+```
+
+```{r}
+forest_model$finalModel
+```
+
+```{r}
+table(Train$SelfPerceivedHealth, predict(forest_model, Train))
+```
+
+```{r}
+variable_importance <- data.frame(randomForest::importance(forest_model$finalModel)) %>% 
+  mutate(predictor = rownames(.))
+
+# Arrange predictors by importance (most to least)
+variable_importance %>% 
+  arrange(desc(MeanDecreaseGini)) 
+```
+P50b	95.67801	P50b		
+P49l	82.79381	P49l		
+P26a	57.85556	P26a		
+P37	50.83692	P37		
+P45	29.36984	P45		
+P49a	25.49853	P49a
+
+
+P342	129.15413	P342		
+P49f4	83.69868	P49f4		
+P47a5	70.95867	P47a5		
+P49a2	69.11410	P49a2		
+P47b5	64.18497	P47b5		
+Suicide1	60.83328	Suicide1
+
+
+
+## Split MIDDLE AND HIGH 
+```{r}
+train_middle <- Train %>% dplyr::filter(P1 == 8)
+train_high <- Train %>% filter(P1 != 8)
+```
+
+
+
+### MIDDLE 
+
+```{r}
+equal_sample_self_Middle <- Train %>% group_by(SelfPerceivedHealth) %>% sample_frac(.2)
+```
+ 
+```{r}
+forest_model_MS <- train(
+  SelfPerceivedHealth ~ .,
+  data = equal_sample_self_Middle,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(12, 64)),
+  trControl = trainControl(method = "oob"),
+  metric = "Accuracy",
+  na.action = na.omit)
+```
+
+```{r}
+plot(forest_model_MS)
+```
+
+```{r}
+forest_model_MS$finalModel
+```
+
+```{r}
+variable_importance_MS <- data.frame(randomForest::importance(forest_model_MS$finalModel)) %>% 
+  mutate(predictor = rownames(.))
+
+# Arrange predictors by importance (most to least)
+variable_importance_MS %>% 
+  arrange(desc(MeanDecreaseGini)) %>% 
+  head()
+```
+
+### HIGH SCHOOL 
+
+```{r}
+equal_sample_self_High <- Train %>% group_by(SelfPerceivedHealth) %>% sample_frac(.1)
+```
+ 
+```{r}
+forest_model_HS <- train(
+  SelfPerceivedHealth ~ .,
+  data = equal_sample_self_High,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(12, 64)),
+  trControl = trainControl(method = "oob"),
+  metric = "Accuracy",
+  na.action = na.omit)
+```
+
+```{r}
+plot(forest_model_HS)
+```
+
+```{r}
+forest_model_HS$finalModel
+```
+
+
+
+Step 1: 
+PCA - how much variance in outcome is explained by each groups of the variables, angle of loading would be informative of category that the variable falls into and the length should help us determine what the main the predictors are. The hope is that PC1 would explain big chunk of variance and then the first couple of PCAs would explain the most variability and would encompass majority of the variables that we need and could use in the model building progress. 
+
+Some things to do: 
+PCA - 30 variables 
+- Look at the observations in overlapping region to see if specific variables are dominating overlap and then may want to remove or add from another category. 
+- Are the people in the overlapping groups are they the same people? 
+- Once we figure out if group of people in overlapping regions the same, are there are certain variables that distinguish the groups? Consider making aggregate metrics so create a binary label. 
+
+
+LDA model
+Logistic Regression (If we assume linear relationship, so try it and see how it is and if it performs well then we can assume linear relationship)
+Random Forest 
+
+
+
+
+
+
+
+
+
+
+
+
+
