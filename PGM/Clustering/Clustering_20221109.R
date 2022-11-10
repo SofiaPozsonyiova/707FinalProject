@@ -32,16 +32,47 @@ summary(Train_standardized)
 
 #Physical Health Related
 phys_health <- Train_standardized %>% 
-  subset(select = c(P14ab1, P14ab2, P14ab5, 
-                    P26a, P26f, P30, P33, P37, P39a,
-                    P40d, P41b, P41c, P41d, P41e, P41g,
-                    P42c, P42d, P45, P71d, P74, P76, P81,
+  subset(select = c(#miss school for sickness
+                    P14ab1, 
+                    
+                    #doctor's appt
+                    #P14ab2, 
+                    
+                    #not enough sleep
+                    P14ab5, 
+                    
+                    #sports team/physical activity
+                    P26a, P26f, 
+                    
+                    #dentist appt
+                    #P30, 
+                    
+                    #physical disability/long term health problem
+                    P33, 
+                    
+                    #physical activity
+                    P37, 
+                    
+                    #skipping lunch
+                    P39a,
+                    
+                    #fast food, soda, sports drinks, energy drinks,
+                    P40d, P41b, P41c, P41d, 
+                    
+                    #sweetened coffee/tea, water
+                    P41e, P41g,
+                    
+                    #asthma, allergy w/ epi pen, hours of sleep/nigh
+                    P42c, P42d, P45, 
+                    
+                    #vape, alcohol, alcohol quantity, prescription drugs
+                    P71d, P74, P76, P81,
+                    
                     FiveFV, Binge, Diab_Prediab,
                     DrugFreq, NicFreq, DentalIssues))
 
 
-phys_health_clus2 <- kmeans(phys_health, centers = 5, nstart = 10)
-table(phys_health_clus2$cluster, Train$P28)
+phys_health_clus2 <- kmeans(phys_health, centers = 2, nstart = 10)
 
 #Compare with fruit/vegetable consumption
 table(phys_health_clus2$cluster, Train$FiveFV)
@@ -93,12 +124,11 @@ table(psych_health_clus$cluster, Train$Suicide)
 
 #Compare with feeling nervous/anxious/on edge 1 = not at all, 4 = nearly every day
 table(psych_health_clus$cluster, Train$P50c)
-
-#this suggests cluster 1 = good psychological health, cluster 2 = bad psychological health
+  #this suggests cluster 1 = good psychological health, cluster 2 = bad psychological health
 
 #compare cluster membership to self-perceived health
 table(psych_health_clus$cluster, Train$SelfPerceivedHealth)
-  #not a very strong relationship, but maybe still 1 = good, 2 = bad?
+  #2 = good, 1 = bad?
 
 #create visualization
 fviz_cluster(psych_health_clus, psych_health)
@@ -125,17 +155,17 @@ social <- Train_standardized %>%
                     P21, P22a, P22e, P23c, P23e, 
                     
                     #school/community programs
-                    P25, P26b, P26d, P26e, P26g, P26h,
+                    #P25, P26b, P26d, P26e, P26g, P26h,
                     
                     #leadership, trusting relationships, 
                     #decision making, learning useful skills
-                    P27b, P27c, P27e, P27g, 
+                    #P27b, P27c, P27e, P27g, 
                     
                     #feel cared about
                     P47a, P47b, P47c, P47d, P47e, P49d,
                     
                     #not sure about these
-                    P49m, P49o, P49p, P49q,
+                    #P49m, P49o, P49p, P49q,
                     
                     #unhealthy/abusive home life
                     P61, P62, P63, P64, P65, P66,
@@ -155,13 +185,12 @@ table(social_clus$cluster, Train$P18d)
 #compare cluster to 'How much do you feel your parents care about you' 1 = not at all, 5 = very much
 table(social_clus$cluster, Train$P47a)
 
-#this may suggest cluster 2 = good social support and cluster 1 = bad social support
-#not clear though - could just be noise
+#this may suggest cluster 2 = bad social support and cluster 1 = good social support
 
 fviz_cluster(social_clus, psych_health)
 
 #check full self-per health var with 5, 4, and 3 clusters
-social_clus5 <- kmeans(social, centers = 5, nstart = 10)
+social_clus5 <- kmeans(social, centers = 5, nstart = 20)
 table(social_clus5$cluster, Train$P28)
 
 social_clus4 <- kmeans(social, centers = 4, nstart = 10)
@@ -169,3 +198,4 @@ table(social_clus4$cluster, Train$P28)
 
 social_clus3 <- kmeans(social, centers = 3, nstart = 10)
 table(social_clus3$cluster, Train$P28)
+  #maybe clusters 2 and 3 = bad perceived health and 1 = good/okay perceived health
