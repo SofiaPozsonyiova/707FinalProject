@@ -73,9 +73,3 @@ auc.tmp <- performance(pred, "auc")
 auc <- as.numeric(auc.tmp@y.values)
 print(auc)
 
-# Run logistic regression model
-logistic_reg <- glm(SelfPerceivedHealth ~ ., data=Train1, family="binomial")
-summary(logistic_reg)
-
-predict(logistic_reg, Test1, type="response")
-
