@@ -109,8 +109,8 @@ table(phys_health_clus$cluster, Train$P33)
 
 
 #compare with self-perceived health 1 = good 2 = bad
-table(phys_health_clus2$cluster, Train$SelfPerceivedHealth)
-fviz_cluster(phys_health_clus2, phys_health, geom = 'point', main = 'Clusters with physical health')
+table(phys_health_clus$cluster, Train$SelfPerceivedHealth)
+fviz_cluster(phys_health_clus, phys_health, geom = 'point', main = 'Clusters with physical health')
 
 phys_crosstab <- CrossTable(phys_health_clus$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
 phys_prop <- 100*phys_crosstab$prop.col
@@ -316,12 +316,168 @@ fviz_cluster(subset_clus, psych_health, geom = 'point', main = 'Clusters with co
 
 
 ```{r}
-
-#Find misclassified subjects
-
+#Learn about misclassified subjects
 miss <- subset[Train$SelfPerceivedHealth != subset_clus$cluster,]
-plot_bar(miss)
 same <- subset[Train$SelfPerceivedHealth == subset_clus$cluster,]
-plot_bar(same)
+
+summary(colMeans(miss) - colMeans(same))
+sum(abs(colMeans(miss) - colMeans(same)) > 0.2)
+
+data.frame(diff = abs(colMeans(miss) - colMeans(same))) %>% filter(diff > 0.2)
+ 
+#learn about misclassifies for each group
+#poor self-perceived health
+poorind <- which(Train$SelfPerceivedHealth == 2,)
+poorself <- subset[poorind,]
+poorself_clust <- (as.data.frame(subset_clus$cluster))[poorind,]
+
+misspoor <- poorself[Train$SelfPerceivedHealth[poorind] != poorself_clust,]
+samepoor <- poorself[Train$SelfPerceivedHealth[poorind] == poorself_clust,]
+
+summary(colMeans(misspoor) - colMeans(samepoor))
+sum(abs(colMeans(misspoor) - colMeans(samepoor)) > 1)
+
+data.frame(diff = abs(colMeans(misspoor) - colMeans(samepoor))) %>% filter(diff > 1)
+
+#good self-perceived health
+goodind <- which(Train$SelfPerceivedHealth == 1,)
+goodself <- subset[goodind,]
+goodself_clust <- (as.data.frame(subset_clus$cluster))[goodind,]
+
+missgood <- goodself[Train$SelfPerceivedHealth[goodind] != goodself_clust,]
+samegood <- goodself[Train$SelfPerceivedHealth[goodind] == goodself_clust,]
+
+summary(colMeans(missgood) - colMeans(samegood))
+sum(abs(colMeans(missgood) - colMeans(samegood)) > 1)
+
+data.frame(diff = abs(colMeans(missgood) - colMeans(samegood))) %>% filter(diff > 1)
+```
+
+```{r}
+#Good Self-Perceived Health: Those who were classified correctly were more likely to respond 'Very much" to P47a, 'How much do you feel your parents care about you?'
+
+P47a_missgood <-  missgood %>% group_by(P47a) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47a, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P47a where SelfPerceivedHealth = 1")
+
+P47a_samegood <-  samegood %>% group_by(P47a) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47a, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P47a where SelfPerceivedHealth = 1")
+
+grid.arrange(P47a_missgood, P47a_samegood, nrow = 1, ncol = 2)
+
+#Poor Self-Perceived Health: Those who were classified correctly were less likely to respond 'Very much" to P47a, 'How much do you feel your parents care about you?'
+
+P47a_misspoor <-  misspoor %>% group_by(P47a) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47a, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P47a where SelfPerceivedHealth = 2")
+
+P47a_samepoor <-  samepoor %>% group_by(P47a) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47a, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P47a where SelfPerceivedHealth = 2")
+
+grid.arrange(P47a_misspoor, P47a_samepoor, nrow = 1, ncol = 2)
+
+```
+
+```{r}
+#Good Self-Perceived Health: Those who were classified correctly were more likely to respond 'Very much" to P47b, 'How much do you feel other adult relatives care about you?'
+
+P47b_missgood <-  missgood %>% group_by(P47b) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47b, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P47a where SelfPerceivedHealth = 1")
+
+P47b_samegood <-  samegood %>% group_by(P47b) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47b, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P47a where SelfPerceivedHealth = 1")
+
+grid.arrange(P47b_missgood, P47b_samegood, nrow = 1, ncol = 2)
+
+#Poor Self-Perceived Health: Those who were classified correctly were less likely to respond 'Very much" to P47b, 'How much do you feel other adult relatives care about you?'
+
+P47b_misspoor <-  misspoor %>% group_by(P47b) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47b, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P47b where SelfPerceivedHealth = 2")
+
+P47b_samepoor <-  samepoor %>% group_by(P47b) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P47b, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P47b where SelfPerceivedHealth = 2")
+
+grid.arrange(P47b_misspoor, P47b_samepoor, nrow = 1, ncol = 2)
+
+```
+
+```{r}
+#Good Self-Perceived Health: Those who were classified correctly were more likely to respond 'No' to P34, 'Do you have any long-term mental health, behavioral or emotional problems? Long-term means lasting 6 months or more.'
+
+P34_missgood <-  missgood %>% group_by(P34) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P34, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P34 where SelfPerceivedHealth = 1")
+
+P34_samegood <-  samegood %>% group_by(P34) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P34, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P34 where SelfPerceivedHealth = 1")
+
+grid.arrange(P34_missgood, P34_samegood, nrow = 1, ncol = 2)
+
+#Poor Self-Perceived Health: Those who were classified correctly were more likely to respond 'Yes' to P34, 'Do you have any long-term mental health, behavioral or emotional problems? Long-term means lasting 6 months or more.'
+
+P34_misspoor <-  misspoor %>% group_by(P34) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P34, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Misclassified Responses to P34 where SelfPerceivedHealth = 2")
+
+P34_samepoor <-  samepoor %>% group_by(P34) %>% summarise(n=n())%>%
+  ggplot(., aes(x = P34, y = n))+
+  geom_col(stat = "identity")+
+  ggtitle(label = "Correctly Classified Responses to P34 where SelfPerceivedHealth = 2")
+
+grid.arrange(P34_misspoor, P34_samepoor, nrow = 1, ncol = 2)
+
+```
+
+
+
+```{r}
+#see what happens with 5 clusters
+subset_clus5 <- kmeans(subset, centers = 5, nstart = 10)
+table(subset_clus5$cluster, Train$SelfPerceivedHealth)
+fviz_cluster(subset_clus5, psych_health, geom = 'point', main = 'Clusters with combination of categories')
+
+      subset_crosstab5 <- CrossTable(subset_clus5$cluster, Train$SelfPerceivedHealth, prop.chisq = FALSE)
+      propcol5 <- 100*subset_crosstab5$prop.col
+      
+      
+      subset_binary5 <- ggplot(propcol5, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2')
+      
+      
+      subset_crosstab_55 <- CrossTable(subset_clus5$cluster, Train$P28, prop.chisq = FALSE)
+      subset_prop_55 <- 100*subset_crosstab_55$prop.col
+      
+      
+      subset_55 <- ggplot(subset_prop_55, aes(x = y, y = Freq, fill = x))+
+        geom_bar(stat = "identity")+
+        coord_flip()+
+        labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
+        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Set2')
+      
+      
+      grid.arrange(subset_binary5, subset_55, nrow = 1, ncol = 2)
 
 ```
