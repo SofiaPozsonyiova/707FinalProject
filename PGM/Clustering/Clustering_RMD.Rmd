@@ -37,7 +37,7 @@ Train[,col_names] <- lapply(Train[,col_names] , as.numeric)
 #Standardize
 #remove outcome (SelfPerceivedHealth) and standardize all other variables
 Train_standardized <- Train %>% subset(select = -c(SelfPerceivedHealth, P28)) %>% mutate_all(~(scale(.) %>% as.vector))
-summary(Train_standardized)
+#summary(Train_standardized)
 
 #Perform hierarchical clustering on entire data set - not informative of self-perceived health (no surprise)
 #dis <- dist(Train_standardized, method = "euclidean")
@@ -325,7 +325,7 @@ sum(abs(colMeans(miss) - colMeans(same)) > 0.2)
 
 data.frame(diff = abs(colMeans(miss) - colMeans(same))) %>% filter(diff > 0.2)
  
-#learn about misclassifies for each group
+#learn about misclassified for each group
 #poor self-perceived health
 poorind <- which(Train$SelfPerceivedHealth == 2,)
 poorself <- subset[poorind,]
