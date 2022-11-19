@@ -440,6 +440,7 @@ Test <- ModelDev[!sample2, ]
 
 ### Saving out 
 ```{r}
+save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
 save(validation_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ValidationTest.RData")
 save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
 save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")

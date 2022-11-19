@@ -5,9 +5,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1  # num. cores
 #SBATCH --output=RandomForest.out  # stdout
-#SBATCH --error=RandomForest.e  # stderr
+#SBATCH --error=RandomForest .e  # stderr
 #SBATCH --mem-per-cpu=1gb
 #SBATCH --time=0-04:00 # time limit (D-HH:MM)
+
 
 cd ~/demo
 
