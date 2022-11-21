@@ -18,8 +18,8 @@ cd ~/demo
 ########################################################################
 
 # Reading in data 
-load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
-dat_RF <- Train
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTrain.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTest.RData")
 
 # Initializing libraries 
 library(ggplot2)
@@ -31,11 +31,11 @@ library(rpart.plot)
 library(class)         
 library(randomForest)  
 library(infer)
-
+names(ClusterTrain)
 # Initializing Random Forest
 forest_model <- train(
   SelfPerceivedHealth ~ .,
-  data = dat_RF,
+  data = ClusterTrain,
   method = "rf",
   tuneGrid = data.frame(mtry = c(2, 12, 64)),
   trControl = trainControl(method = "oob"),

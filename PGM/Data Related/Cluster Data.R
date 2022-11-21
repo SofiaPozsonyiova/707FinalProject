@@ -4,12 +4,6 @@
 
 library(dplyr)
 
-# Demo Cluster  
-load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Individual\ Clusters/demo_clusters.RData")
-names(demo_clusters)
-demo <- demo_clusters %>% mutate(Clus1_Demo = `Clus 1`,
-                                 Clus2_Demo = `Clus 2`) %>% dplyr::select(-c(`Clus 1`,`Clus 2`))
-
 # Physical Cluster  
 load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Individual\ Clusters/physical_clusters.RData")
 physical <- physical_clusters %>% mutate(Clus1_physical = `Clus 1`,
@@ -20,11 +14,16 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Ind
 psychological <- psychological_clusters %>% mutate(Clus1_psychological = `Clus 1`,
                                          Clus2_psychological = `Clus 2`)%>% dplyr::select(-c(`Clus 1`,`Clus 2`))
 
+# Social Cluster 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Individual\ Clusters/social_clusters.RData")
+social <- social_clusters %>% mutate(Clus1_social = `Clus 1`,
+                                                   Clus2_social = `Clus 2`)%>% dplyr::select(-c(`Clus 1`,`Clus 2`))
+
 ##########################
 #    Merging Cluster     #
 ##########################
 
-dat1 <- merge(physical,demo, by = "subject")
+dat1 <- merge(physical,social, by = "subject")
 ClusterDat <- merge(dat1,psychological, by = "subject")
 
 
