@@ -19,12 +19,24 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Ind
 social <- social_clusters %>% mutate(Clus1_social = `Clus 1`,
                                                    Clus2_social = `Clus 2`)%>% dplyr::select(-c(`Clus 1`,`Clus 2`))
 
+# Demo Cluster 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Individual\ Clusters/demo_clusters.RData")
+demo <- demo_clusters %>% mutate(Clus1_demo = `Clus 1`,
+                                     Clus2_demo = `Clus 2`)%>% dplyr::select(-c(`Clus 1`,`Clus 2`))
+
+# School Cluster 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/Individual\ Clusters/school_clusters.RData")
+school <- school_clusters %>% mutate(Clus1_school = `Clus 1`,
+                                 Clus2_school = `Clus 2`)%>% dplyr::select(-c(`Clus 1`,`Clus 2`))
+
 ##########################
 #    Merging Cluster     #
 ##########################
 
 dat1 <- merge(physical,social, by = "subject")
-ClusterDat <- merge(dat1,psychological, by = "subject")
+dat2 <- merge(dat1,psychological, by = "subject")
+dat3 <- merge(dat2,demo, by = "subject")
+ClusterDat <- merge(dat3,school, by = "subject")
 
 
 ##################################
