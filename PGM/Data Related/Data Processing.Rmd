@@ -18,7 +18,7 @@ library(ggplot2)
 ```{r}
 # Reading in Data and Saving Out
 
-# dat <- read.csv("/Users/sofiapozsonyiova/Downloads/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
+dat <- read.csv("/Users/sofiapozsonyiova/Desktop/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
 # save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet.RData")
 # save(dat_sub_named,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
 ```
