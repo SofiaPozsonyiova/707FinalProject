@@ -21,25 +21,15 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Clust
 ```{r}
 # Get rid of duplicate variable in dataset
 Train <- ClusterTrain %>% subset(select = c(Clus1_physical,
-                                            Clus2_physical,
                                             Clus1_social,
-                                            Clus2_social,
                                             Clus1_psychological,
-                                            Clus2_psychological,
                                             Clus1_demo,
-                                            Clus2_demo,
-                                            Clus1_school,
-                                            Clus2_school))
+                                            Clus1_school))
 Test <- ClusterTest %>% subset(select = c(Clus1_physical,
-                                            Clus2_physical,
                                             Clus1_social,
-                                            Clus2_social,
                                             Clus1_psychological,
-                                            Clus2_psychological,
                                             Clus1_demo,
-                                            Clus2_demo,
-                                            Clus1_school,
-                                            Clus2_school))
+                                            Clus1_school))
 
 # Make data numeric
 X_Train <- sapply(Train, as.numeric)
