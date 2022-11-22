@@ -62,10 +62,14 @@ Validation_Standardized <- cbind(X_Val_Standardized, Y_Val)
 # Train linear discriminant analysis model
 lda_model <- lda(SelfPerceivedHealth~., data=Train_Standardized)
 lda_model
+plot(lda_model)
 
 # Make predictions
 predictions <- predict(lda_model, Test_Standardized)
 predictions_val <- predict(lda_model, Validation_Standardized)
+
+sum(predictions$posterior[,1]>=.5)
+sum(predictions_val$posterior[,1]>=.5)
 
 # Model accuracy
 mean(predictions$class==Test_Standardized$SelfPerceivedHealth)
@@ -79,11 +83,11 @@ predictions_val <- predict(lda_model, Validation_Standardized)
 ldahist(data = predictions_val$x[,1], g=Validation_Standardized$SelfPerceivedHealth)
 
 # Plot
-#lda_plot_data2 <- cbind(Validation_Standardized, predict(lda_model)$x)
+lda_plot_data <- cbind(Train_Standardized, predict(lda_model)$x)
 
 # ggplot(lda_plot_data, aes(LD1, SelfPerceivedHealth)) + geom_point(aes(color = SelfPerceivedHealth))
 
-#ggplot(lda_plot_data, aes(x = 1:nrow(lda_plot_data), y = LD1)) + geom_point(aes(color=SelfPerceivedHealth))
+ggplot(lda_plot_data, aes(x = 1:nrow(lda_plot_data), y = LD1)) + geom_point(aes(color=SelfPerceivedHealth))
 ```
     
    
