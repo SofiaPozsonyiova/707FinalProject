@@ -368,3 +368,30 @@ plotROC(Val_sub1$SelfPerceivedHealth, predicted1_val)
 ```
 
 
+```{r}
+## Plot ROC curves for poster
+# Load pROC library
+library(pROC)
+
+
+## Logistic regression with 20 variables
+# Save ROC object
+rocobj <- roc(Val_sub20$SelfPerceivedHealth, predicted20_val)
+
+# Save AUC
+myauc <- paste("AUC=",round(auc(rocobj), digits=3), sep='')
+
+jpeg("roc_20vars3.jpg")
+ggroc(rocobj) +
+    annotate(geom="text", x=0.25, y=0.7, label=myauc, size=6) +
+    ggtitle("ROC Curve") + 
+    xlab("Specificity") +
+    ylab("Sensitivity") +
+    theme_classic() +
+    theme(axis.text = element_text(size=20),
+          axis.title = element_text(size=24),
+          plot.title = element_text(size=24))
+dev.off()
+```
+
+
