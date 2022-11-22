@@ -14,6 +14,7 @@ library(InformationValue)
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Train.RData")
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Test.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ValidationTest.RData")
 ```
     
 ```{r}
@@ -59,7 +60,32 @@ misClassError(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
 # Plot ROC Curve
 plotROC(Test1$SelfPerceivedHealth, predicted)
 ```
-   
+    
+# Test model on validation set
+```{r}
+# Predict on validation data
+predicted_validation <- predict(logistic_reg, validation_test, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal_val <- optimalCutoff(validation_test$SelfPerceivedHealth, predicted_validation)[1]
+optimal_val
+
+# Run confusion matrix
+confusionMatrix(validation_test$SelfPerceivedHealth, predicted_validation)
+
+# Calculate sensitivity
+sensitivity(validation_test$SelfPerceivedHealth, predicted_validation)
+
+# Calculate specificity
+specificity(validation_test$SelfPerceivedHealth, predicted_validation)
+
+# Calculate total missclassification error rate
+misClassError(validation_test$SelfPerceivedHealth, predicted_validation, threshold=optimal_val)
+
+# Plot ROC Curve
+plotROC(validation_test$SelfPerceivedHealth, predicted_validation) 
+```
+
 ```{r}
 # Make train subsets
 Train_sub20 <- Train %>% dplyr::select(c(P49f,P49l,P26a,P50b,P49a,P37,P49h,P45,P49i,P49e,P34,P47e,P50c,P41g,P47a,P50d,P47b,P49p,P49d,P50a,SelfPerceivedHealth))
@@ -92,7 +118,7 @@ summary(logistic_reg20)
 predicted20 <- predict(logistic_reg20, Test_sub20, type="response")
 
 # Find optimal cutoff probability to use to maximize accuracy
-optimal20 <- optimalCutoff(Test_sub20$SelfPerceivedHealth, predicted)[1]
+optimal20 <- optimalCutoff(Test_sub20$SelfPerceivedHealth, predicted20)[1]
 optimal20
 
 # Run confusion matrix
@@ -136,7 +162,7 @@ sensitivity(Test_sub5$SelfPerceivedHealth, predicted5)
 specificity(Test_sub5$SelfPerceivedHealth, predicted5)
 
 # Calculate total missclassification error rate
-misClassError(Test_sub5$SelfPerceivedHealth, predicted5, threshold=optimal)
+misClassError(Test_sub5$SelfPerceivedHealth, predicted5, threshold=optimal5)
 
 # Plot ROC Curve
 plotROC(Test_sub5$SelfPerceivedHealth, predicted5) 
@@ -167,7 +193,7 @@ sensitivity(Test_sub2$SelfPerceivedHealth, predicted2)
 specificity(Test_sub2$SelfPerceivedHealth, predicted2)
 
 # Calculate total missclassification error rate
-misClassError(Test_sub2$SelfPerceivedHealth, predicted2, threshold=optimal)
+misClassError(Test_sub2$SelfPerceivedHealth, predicted2, threshold=optimal2)
 
 # Plot ROC Curve
 plotROC(Test_sub2$SelfPerceivedHealth, predicted2) 
@@ -198,7 +224,7 @@ sensitivity(Test_sub1$SelfPerceivedHealth, predicted1)
 specificity(Test_sub1$SelfPerceivedHealth, predicted1)
 
 # Calculate total missclassification error rate
-misClassError(Test_sub1$SelfPerceivedHealth, predicted1, threshold=optimal)
+misClassError(Test_sub1$SelfPerceivedHealth, predicted1, threshold=optimal1)
 
 # Plot ROC Curve
 plotROC(Test_sub1$SelfPerceivedHealth, predicted1) 
