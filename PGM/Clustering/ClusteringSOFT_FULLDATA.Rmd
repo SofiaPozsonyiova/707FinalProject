@@ -138,9 +138,9 @@ phys_prop <- 100*phys_crosstab$prop.col
       
       grid.arrange(phys_binary, phys_5, nrow = 1, ncol = 2)
 
-physical_clusters <- as.data.frame(phys_health_clus$U)
-physical_clusters$subject <- rownames(physical_clusters)
-save(physical_clusters,file ="/Users/sdm98/Documents/GitHub/Private707/data/physical_clusters.RData")
+#physical_clusters <- as.data.frame(phys_health_clus$U)
+#physical_clusters$subject <- rownames(physical_clusters)
+#save(physical_clusters,file ="/Users/sdm98/Documents/GitHub/Private707/data/physical_clusters.RData")
 ```
 
 
@@ -412,7 +412,7 @@ table(subset_clus$clus[,1], na_removed_dat$SelfPerceivedHealth)
         geom_bar(stat = "identity")+
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
-        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        ggtitle(label = "Proportion of Each Combined Cluster in Self-Perceived Health Groups")+ 
         scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
       
       
@@ -424,7 +424,7 @@ table(subset_clus$clus[,1], na_removed_dat$SelfPerceivedHealth)
         geom_bar(stat = "identity")+
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
-        ggtitle(label = "Proportion of Each Subset Cluster in Self-Perceived Health Groups")+ 
+        ggtitle(label = "Proportion of Each Combined Cluster in Self-Perceived Health Groups")+ 
         scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
       
       
