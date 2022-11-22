@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load libraries
 library(tidyverse)
 library(InformationValue)
-library(caret)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Train.RData")
