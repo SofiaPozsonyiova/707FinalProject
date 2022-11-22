@@ -74,16 +74,16 @@ mean(predictions_val$class==Validation_Standardized$SelfPerceivedHealth)
 # Plot histogram of LDA
 predictions_training <- predict(lda_model, Train_Standardized)
 ldahist(data = predictions_training$x[,1], g=Train_Standardized$SelfPerceivedHealth)
+
 predictions_val <- predict(lda_model, Validation_Standardized)
 ldahist(data = predictions_val$x[,1], g=Validation_Standardized$SelfPerceivedHealth)
 
 # Plot
-lda_plot_data2 <- cbind(Validation_Standardized, predict(lda_model)$x)
+#lda_plot_data2 <- cbind(Validation_Standardized, predict(lda_model)$x)
 
 # ggplot(lda_plot_data, aes(LD1, SelfPerceivedHealth)) + geom_point(aes(color = SelfPerceivedHealth))
 
-ggplot(lda_plot_data, aes(x = 1:nrow(lda_plot_data), y = LD1)) +
-  geom_point(aes(color=SelfPerceivedHealth))
+#ggplot(lda_plot_data, aes(x = 1:nrow(lda_plot_data), y = LD1)) + geom_point(aes(color=SelfPerceivedHealth))
 ```
     
    
@@ -102,6 +102,25 @@ auc.tmp <- performance(pred, "auc")
 auc <- as.numeric(auc.tmp@y.values)
 print(auc)
 ```
+    
+```{r}
+## Validation set
+# Run prediction function
+pred_val <- prediction(as.numeric(predictions_val$class), Validation_Standardized$SelfPerceivedHealth)
+
+# Run performance function
+perf_val <- performance(pred_val, "tpr", "fpr")
+
+# Plot ROC curve
+plot(perf_val)
+
+# Calculate area under the curve
+auc.tmp <- performance(pred_val, "auc")
+auc <- as.numeric(auc.tmp@y.values)
+print(auc)
+```
+    
+
 
 
 
