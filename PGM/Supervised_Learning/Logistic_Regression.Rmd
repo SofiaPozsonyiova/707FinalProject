@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load libraries
 library(tidyverse)
 library(InformationValue)
+library(caret)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Train.RData")
@@ -21,6 +22,7 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Valid
 # Get rid of duplicate variable in dataset
 Train1 <- Train %>% subset(select = -c(P28))
 Test1 <- Test %>% subset(select = -c(P28))
+Validation1 <- validation_test %>% subset(select = -c(P28))
 ```
    
 ```{r}
@@ -64,26 +66,29 @@ plotROC(Test1$SelfPerceivedHealth, predicted)
 # Test model on validation set
 ```{r}
 # Predict on validation data
-predicted_validation <- predict(logistic_reg, validation_test, type="response")
+predicted_validation <- predict(logistic_reg, Validation1, type="response")
 
 # Find optimal cutoff probability to use to maximize accuracy
-optimal_val <- optimalCutoff(validation_test$SelfPerceivedHealth, predicted_validation)[1]
+optimal_val <- optimalCutoff(Validation1$SelfPerceivedHealth, predicted_validation)[1]
 optimal_val
 
 # Run confusion matrix
-confusionMatrix(validation_test$SelfPerceivedHealth, predicted_validation)
+confusionMatrix(Validation1$SelfPerceivedHealth, predicted_validation)
+
+# Calculate accuracy
+((5434+2202) / (5434+1469+933+2202)) * 100
 
 # Calculate sensitivity
-sensitivity(validation_test$SelfPerceivedHealth, predicted_validation)
+sensitivity(Validation1$SelfPerceivedHealth, predicted_validation)
 
 # Calculate specificity
-specificity(validation_test$SelfPerceivedHealth, predicted_validation)
+specificity(Validation1$SelfPerceivedHealth, predicted_validation)
 
 # Calculate total missclassification error rate
-misClassError(validation_test$SelfPerceivedHealth, predicted_validation, threshold=optimal_val)
+misClassError(Validation1$SelfPerceivedHealth, predicted_validation, threshold=optimal_val)
 
 # Plot ROC Curve
-plotROC(validation_test$SelfPerceivedHealth, predicted_validation) 
+plotROC(Validation1$SelfPerceivedHealth, predicted_validation) 
 ```
 
 ```{r}
@@ -104,16 +109,28 @@ Test_sub5 <- Test %>% dplyr::select(c(P37,P49f,P45,P26a,P49l,SelfPerceivedHealth
 Test_sub2 <- Test %>% dplyr::select(c(P49f,P49l,SelfPerceivedHealth))
 
 Test_sub1 <- Test %>% dplyr::select(c(P49f,SelfPerceivedHealth))
+
+# Make validation subsets
+Val_sub20 <- validation_test %>% dplyr::select(c(P49f,P49l,P26a,P50b,P49a,P37,P49h,P45,P49i,P49e,P34,P47e,P50c,P41g,P47a,P50d,P47b,P49p,P49d,P50a,SelfPerceivedHealth))
+
+Val_sub5 <- validation_test %>% dplyr::select(c(P37,P49f,P45,P26a,P49l,SelfPerceivedHealth))
+
+Val_sub2 <- validation_test %>% dplyr::select(c(P49f,P49l,SelfPerceivedHealth))
+
+Val_sub1 <- validation_test %>% dplyr::select(c(P49f,SelfPerceivedHealth))
 ```
     
 # Subset of 20 variables
 ```{r}
+## Build model
 # Run logistic regression model
 logistic_reg20 <- glm(SelfPerceivedHealth ~ ., data=Train_sub20, family="binomial")
 
 # View model summary
 summary(logistic_reg20)
 
+
+## Test data
 # Predict on test data
 predicted20 <- predict(logistic_reg20, Test_sub20, type="response")
 
@@ -130,21 +147,55 @@ sensitivity(Test_sub20$SelfPerceivedHealth, predicted20)
 # Calculate specificity
 specificity(Test_sub20$SelfPerceivedHealth, predicted20)
 
-# Calculate total missclassification error rate
+# Calculate total misclassification error rate
 misClassError(Test_sub20$SelfPerceivedHealth, predicted20, threshold=optimal)
 
 # Plot ROC Curve
+#jpeg("roc_20vars.jpg")
 plotROC(Test_sub20$SelfPerceivedHealth, predicted20)
+#dev.off()
+
+
+## Validation data
+# Predict on validation data
+predicted20_val <- predict(logistic_reg20, Val_sub20, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal20_val <- optimalCutoff(Val_sub20$SelfPerceivedHealth, predicted20_val)[1]
+optimal20_val
+
+# Run confusion matrix
+confusionMatrix(Val_sub20$SelfPerceivedHealth, predicted20_val)
+
+# Calculate accuracy
+((5402+2126) / (5402+1545+965+2126))*100
+
+# Calculate sensitivity
+sensitivity(Val_sub20$SelfPerceivedHealth, predicted20_val)
+
+# Calculate specificity
+specificity(Val_sub20$SelfPerceivedHealth, predicted20_val)
+
+# Calculate total misclassification error rate
+misClassError(Val_sub20$SelfPerceivedHealth, predicted20_val, threshold=optimal20_val)
+
+# Plot ROC curve
+jpeg("roc_20vars2.jpg")
+plotROC(Val_sub20$SelfPerceivedHealth, predicted20_val)
+dev.off()
 ```
     
 # Subset of 5 variables
 ```{r}
+## Build model
 # Run logistic regression model
 logistic_reg5 <- glm(SelfPerceivedHealth ~ ., data=Train_sub5, family="binomial")
 
 # View model summary
 summary(logistic_reg5)
 
+
+# Test data
 # Predict on test data
 predicted5 <- predict(logistic_reg5, Test_sub5, type="response")
 
@@ -165,17 +216,47 @@ specificity(Test_sub5$SelfPerceivedHealth, predicted5)
 misClassError(Test_sub5$SelfPerceivedHealth, predicted5, threshold=optimal5)
 
 # Plot ROC Curve
-plotROC(Test_sub5$SelfPerceivedHealth, predicted5) 
+plotROC(Test_sub5$SelfPerceivedHealth, predicted5)
+
+
+## Validation data
+# Predict on validation data
+predicted5_val <- predict(logistic_reg5, Val_sub5, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal5_val <- optimalCutoff(Val_sub5$SelfPerceivedHealth, predicted5_val)[1]
+optimal5_val
+
+# Run confusion matrix
+confusionMatrix(Val_sub5$SelfPerceivedHealth, predicted5_val)
+
+# Calculate accuracy
+((5318+2005) / (5318+1666+1049+2005)) * 100
+
+# Calculate sensitivity
+sensitivity(Val_sub5$SelfPerceivedHealth, predicted5_val)
+
+# Calculate specificity
+specificity(Val_sub5$SelfPerceivedHealth, predicted5_val)
+
+# Calculate total misclassification error rate
+misClassError(Val_sub5$SelfPerceivedHealth, predicted5_val, threshold=optimal5_val)
+
+# Plot ROC curve
+plotROC(Val_sub5$SelfPerceivedHealth, predicted5_val)
 ```
     
 # Subset of 2 variables
 ```{r}
+## Build model
 # Run logistic regression model
 logistic_reg2 <- glm(SelfPerceivedHealth ~ ., data=Train_sub2, family="binomial")
 
 # View model summary
 summary(logistic_reg2)
 
+
+## Test data
 # Predict on test data
 predicted2 <- predict(logistic_reg2, Test_sub2, type="response")
 
@@ -196,17 +277,47 @@ specificity(Test_sub2$SelfPerceivedHealth, predicted2)
 misClassError(Test_sub2$SelfPerceivedHealth, predicted2, threshold=optimal2)
 
 # Plot ROC Curve
-plotROC(Test_sub2$SelfPerceivedHealth, predicted2) 
+plotROC(Test_sub2$SelfPerceivedHealth, predicted2)
+
+
+## Validation data
+# Predict on validation data
+predicted2_val <- predict(logistic_reg2, Val_sub2, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal2_val <- optimalCutoff(Val_sub2$SelfPerceivedHealth, predicted2_val)[1]
+optimal2_val
+
+# Run confusion matrix
+confusionMatrix(Val_sub2$SelfPerceivedHealth, predicted2_val)
+
+# Calculate accuracy
+((5494+1709) / (5494+1709+873+1962)) * 100
+
+# Calculate sensitivity
+sensitivity(Val_sub2$SelfPerceivedHealth, predicted2_val)
+
+# Calculate specificity
+specificity(Val_sub2$SelfPerceivedHealth, predicted2_val)
+
+# Calculate total misclassification error rate
+misClassError(Val_sub2$SelfPerceivedHealth, predicted2_val, threshold=optimal2_val)
+
+# Plot ROC curve
+plotROC(Val_sub2$SelfPerceivedHealth, predicted2_val)
 ```
     
 # Subset of 1 variable
 ```{r}
+## Build model
 # Run logistic regression model
 logistic_reg1 <- glm(SelfPerceivedHealth ~ ., data=Train_sub1, family="binomial")
 
 # View model summary
 summary(logistic_reg1)
 
+
+## Test data
 # Predict on test data
 predicted1 <- predict(logistic_reg1, Test_sub1, type="response")
 
@@ -227,7 +338,34 @@ specificity(Test_sub1$SelfPerceivedHealth, predicted1)
 misClassError(Test_sub1$SelfPerceivedHealth, predicted1, threshold=optimal1)
 
 # Plot ROC Curve
-plotROC(Test_sub1$SelfPerceivedHealth, predicted1) 
+plotROC(Test_sub1$SelfPerceivedHealth, predicted1)
+
+
+## Validation data
+# Predict on validation data
+predicted1_val <- predict(logistic_reg1, Val_sub1, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal1_val <- optimalCutoff(Val_sub1$SelfPerceivedHealth, predicted1_val)[1]
+optimal1_val
+
+# Run confusion matrix
+confusionMatrix(Val_sub1$SelfPerceivedHealth, predicted1_val)
+
+# Calculate accuracy
+((5021+2026) / (5021+1645+1346+2026)) * 100
+
+# Calculate sensitivity
+sensitivity(Val_sub1$SelfPerceivedHealth, predicted1_val)
+
+# Calculate specificity
+specificity(Val_sub1$SelfPerceivedHealth, predicted1_val)
+
+# Calculate total misclassification error rate
+misClassError(Val_sub1$SelfPerceivedHealth, predicted1_val, threshold=optimal1_val)
+
+# Plot ROC curve
+plotROC(Val_sub1$SelfPerceivedHealth, predicted1_val)
 ```
 
 
