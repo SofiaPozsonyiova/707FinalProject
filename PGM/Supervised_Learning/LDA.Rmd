@@ -21,12 +21,12 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Valid
    
    
 ```{r}
-# Get rid of duplicate variable in dataset
+# Get rid of duplicate variable in datasets
 Train1 <- Train %>% subset(select = -c(P28))
 Test1 <- Test %>% subset(select = -c(P28))
 Validation1 <- validation_test %>% subset(select = -c(P28))
 
-# Make dataset with independent variables
+# Make datasets with independent variables
 X_Train <- Train1 %>% subset(select = -c(SelfPerceivedHealth))
 X_Test <- Test1 %>% subset(select = -c(SelfPerceivedHealth))
 X_Val <- Validation1 %>% subset(select = -c(SelfPerceivedHealth))
@@ -36,12 +36,12 @@ X_Train <- sapply(X_Train, as.numeric)
 X_Test <- sapply(X_Test, as.numeric)
 X_Val <- sapply(X_Val, as.numeric)
 
-# Make dataframe
+# Make dataframes
 X_Train <- as.data.frame(X_Train)
 X_Test <- as.data.frame(X_Test)
 X_Val <- as.data.frame(X_Val)
 
-# Make vector with dependent variable
+# Make vectors with dependent variables
 Y_Train <- Train1 %>% subset(select = SelfPerceivedHealth)
 Y_Test <- Test1 %>% subset(select = SelfPerceivedHealth)
 Y_Val <- Validation1 %>% subset(select = SelfPerceivedHealth)
@@ -64,34 +64,36 @@ lda_model <- lda(SelfPerceivedHealth~., data=Train_Standardized)
 lda_model
 plot(lda_model)
 
-# Make predictions
+# Make predictions on test data
 predictions <- predict(lda_model, Test_Standardized)
+
+# Make predictions on validation data (final test)
 predictions_val <- predict(lda_model, Validation_Standardized)
 
-sum(predictions$posterior[,1]>=.5)
-sum(predictions_val$posterior[,1]>=.5)
-
-# Model accuracy
+# Model accuracy for test data
 mean(predictions$class==Test_Standardized$SelfPerceivedHealth)
+
+# Model accuracy for validation data (final test)
 mean(predictions_val$class==Validation_Standardized$SelfPerceivedHealth)
 
-# Plot histogram of LDA
+# Plot histogram of LDA on test data
 predictions_training <- predict(lda_model, Train_Standardized)
 ldahist(data = predictions_training$x[,1], g=Train_Standardized$SelfPerceivedHealth)
 
+# Plot histogram of LDA on validation data
 predictions_val <- predict(lda_model, Validation_Standardized)
 ldahist(data = predictions_val$x[,1], g=Validation_Standardized$SelfPerceivedHealth)
 
-# Plot
+# Save training data and predictions in dataframe for plot
 lda_plot_data <- cbind(Train_Standardized, predict(lda_model)$x)
 
-# ggplot(lda_plot_data, aes(LD1, SelfPerceivedHealth)) + geom_point(aes(color = SelfPerceivedHealth))
-
+# Plot training data points against LD1
 ggplot(lda_plot_data, aes(x = 1:nrow(lda_plot_data), y = LD1)) + geom_point(aes(color=SelfPerceivedHealth))
 ```
     
    
 ```{r}
+## Test set
 # Run prediction function
 pred <- prediction(as.numeric(predictions$class), Test_Standardized$SelfPerceivedHealth)
 
