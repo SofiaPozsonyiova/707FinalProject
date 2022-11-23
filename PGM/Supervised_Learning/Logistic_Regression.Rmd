@@ -18,14 +18,14 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Valid
 ```
     
 ```{r}
-# Get rid of duplicate variable in dataset
+# Get rid of duplicate variable in datasets
 Train1 <- Train %>% subset(select = -c(P28))
 Test1 <- Test %>% subset(select = -c(P28))
 Validation1 <- validation_test %>% subset(select = -c(P28))
 ```
    
 ```{r}
-# Run logistic regression model
+# Run logistic regression model on all variables
 logistic_reg <- glm(SelfPerceivedHealth ~ ., data=Train1, family="binomial")
 
 # View model summary
@@ -179,9 +179,7 @@ specificity(Val_sub20$SelfPerceivedHealth, predicted20_val)
 misClassError(Val_sub20$SelfPerceivedHealth, predicted20_val, threshold=optimal20_val)
 
 # Plot ROC curve
-jpeg("roc_20vars2.jpg")
 plotROC(Val_sub20$SelfPerceivedHealth, predicted20_val)
-dev.off()
 ```
     
 # Subset of 5 variables
@@ -373,7 +371,6 @@ plotROC(Val_sub1$SelfPerceivedHealth, predicted1_val)
 # Load pROC library
 library(pROC)
 
-
 ## Logistic regression with 20 variables
 # Save ROC object
 rocobj <- roc(Val_sub20$SelfPerceivedHealth, predicted20_val)
@@ -381,6 +378,7 @@ rocobj <- roc(Val_sub20$SelfPerceivedHealth, predicted20_val)
 # Save AUC
 myauc <- paste("AUC=",round(auc(rocobj), digits=3), sep='')
 
+# Make and save ROC curve plot
 jpeg("roc_20vars3.jpg")
 ggroc(rocobj) +
     annotate(geom="text", x=0.25, y=0.7, label=myauc, size=6) +
