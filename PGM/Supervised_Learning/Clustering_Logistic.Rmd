@@ -1,0 +1,73 @@
+---
+title: "Logistic Regression with Clusters"
+author: "Mairead Dillon"
+date: '2022-11-22'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load libraries
+library(tidyverse)
+library(InformationValue)
+
+# Load data
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Cluster Data/ClusterTrain.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Cluster Data/ClusterTest.RData")
+```
+   
+```{r}
+# Select only necessary variables
+Train <- ClusterTrain %>% subset(select = c(Clus1_physical,
+                                            Clus1_social,
+                                            Clus1_psychological,
+                                            Clus1_demo,
+                                            Clus1_school,
+                                            SelfPerceivedHealth))
+Test <- ClusterTest %>% subset(select = c(Clus1_physical,
+                                          Clus1_social,
+                                          Clus1_psychological,
+                                          Clus1_demo,
+                                          Clus1_school,
+                                          SelfPerceivedHealth))
+```
+   
+```{r}
+# Run logistic regression model
+logistic_reg <- glm(SelfPerceivedHealth ~ ., data=Train, family="binomial")
+
+# View model summary
+summary(logistic_reg)
+```
+    
+```{r}
+# Predict on test data
+predicted <- predict(logistic_reg, Test, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal <- optimalCutoff(Test$SelfPerceivedHealth, predicted)[1]
+optimal
+```
+   
+```{r}
+# Run confusion matrix
+confusionMatrix(Test$SelfPerceivedHealth, predicted)
+predicted
+```
+    
+```{r}
+# Calculate sensitivity
+sensitivity(Test$SelfPerceivedHealth, predicted)
+
+# Calculate specificity
+specificity(Test$SelfPerceivedHealth, predicted)
+
+# Calculate total missclassification error rate
+misClassError(Test$SelfPerceivedHealth, predicted, threshold=optimal)
+```
+    
+```{r}
+# Plot ROC Curve
+plotROC(Test1$SelfPerceivedHealth, predicted)
+```
+
