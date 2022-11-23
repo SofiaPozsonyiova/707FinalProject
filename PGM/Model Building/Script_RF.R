@@ -19,11 +19,12 @@ cd ~/demo
 
 # Reading in data 
 # Cluster
-# load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTrain.RData")
-# load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTest.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTrain.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Cluster\ Data/ClusterTest.RData")
 
 load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
 load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ValidationTest.RData")
 
 # Initializing libraries 
 library(ggplot2)
@@ -37,6 +38,18 @@ library(randomForest)
 library(infer)
 
 
+# Train <- ClusterTrain %>% select(c(Clus1_physical,Clus1_social,Clus1_psychological,Clus1_demo,Clus1_school,SelfPerceivedHealth)) 
+
+
+Train_1 <- Train  %>% filter(SelfPerceivedHealth == 1)
+Train_1_equal <- Train_1 %>%  sample_frac(.4)
+Train_0 <- Train  %>% filter(SelfPerceivedHealth == 0)
+Train_0_equal <- Train_0 %>%  sample_frac(.2413)
+Train_equal <- rbind(Train_1_equal,Train_0_equal)
+Train_equal <- Train_equal %>% select(-P28)
+
+Train <- Train %>% select(-P28)
+
 Train_sub <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49l,P26a,P50b,P49a,P37,P49h,P45,P49i,P49e,P34,P47e,P50c,P41g,P47a,P50d,P47b,P49p,P49d,P50a,SelfPerceivedHealth))
 Train_sub5 <- Train %>% select(-P28) %>% dplyr::select(c(P37,P49f,P45,P26a,P49l,SelfPerceivedHealth))
 Train_sub2 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49l,SelfPerceivedHealth))
@@ -45,9 +58,9 @@ Train_sub1 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,SelfPerceivedHealt
 # Initializing Random Forest
 forest_model <- train(
   SelfPerceivedHealth ~ ., 
-  data = Train_sub1,
+  data = Train_sub5,
   method = "rf",
-  tuneGrid = data.frame(mtry = c(1,2)),
+  tuneGrid = data.frame(mtry = c(1,2,4,5)),
   trControl = trainControl(method = "oob"),
   metric = "Accuracy",
   na.action = na.omit)
@@ -69,7 +82,7 @@ variable_importance_sub1 %>%
 ## Get variable importance, and turn into a data frame
 var_imp <- varImp(forest_model, scale=FALSE)$importance
 var_imp <- data.frame(variables=row.names(var_imp), importance=var_imp$Overall)
-
+var_imp <- var_imp %>% arrange(desc(importance))
 
 ## Create a plot of variable importance
 var_imp %>%
@@ -90,21 +103,15 @@ var_imp %>%
   xlab('Variables') +
   
   ## Add a title
-  labs(title='Random forest Variable Importance') + ylab("Importance")
-  
-  ## Some layout for the plot
-  theme_minimal() + 
-  theme(axis.text = element_text(size = 10), 
-        axis.title = element_text(size = 15), 
-        plot.title = element_text(size = 20),)
-
-  
-  
+  labs(title='Random forest Variable Importance') + ylab("Importance") + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 24))
   
 Test_sub <- Test %>% dplyr::select(c(P49f,P49l,P26a,P50b,P49a,P37,P49h,P45,P49i,P49e,P34,P47e,P50c,P41g,P47a,P50d,P47b,P49p,P49d,P50a,SelfPerceivedHealth))
 Test_sub5 <- Test %>% dplyr::select(c(P37,P49f,P45,P26a,P49l,SelfPerceivedHealth))
 Test_sub2 <- Test %>% dplyr::select(c(P49f,P49l,SelfPerceivedHealth))
 Test_sub1 <- Test %>% dplyr::select(c(P49f,SelfPerceivedHealth))
+
 
 
 ## Generate predictions
@@ -114,20 +121,26 @@ y_hats <- predict(
   object=forest_model, 
   
   ## Data to use for predictions; remove the Species
-  newdata= Test_sub1 %>% select(-SelfPerceivedHealth))
+  newdata= validation_test %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
-accuracy <- mean(y_hats == Test_sub1$SelfPerceivedHealth)*100
+accuracy <- mean(y_hats == validation_test$SelfPerceivedHealth)*100
 cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+
+# Validation 5: Accuracy on testing data: 72.98%
+
+
+
+
 
 
 # Including all variables: 75.09%
+# Including all variables: 74.4%
+# Including all variables: 74.12%
 # Including 20 variables: 73.92%
 # Including 5 variables: 72.14%
 # Including 2 variables: 71.1%
 # Including 1 variable: 70.03%
-
-
 
 
 
@@ -144,11 +157,16 @@ forest_plot <- function(x1, x2, y, lab_1, lab_2){
     mutate(class = predict(model, newdata = data.frame(x1 = Var1, x2 = Var2), type = "class"))
   ggplot(testdata, aes(x = Var1, y = Var2, color = class)) + 
     geom_point() + 
-    labs(x = paste(lab_1), y = paste(lab_2), title = "forest classification boundaries") + 
-    theme(legend.position = "bottom")
+    labs(x = paste(lab_1), y = paste(lab_2), title = "Forest Classification Boundaries") + 
+    theme(legend.position = "bottom")+
+    theme(axis.text = element_text(size = 18), 
+          axis.title = element_text(size = 20), 
+          plot.title = element_text(size = 18),
+          legend.title = element_text(size=18), 
+          legend.text = element_text(size=18))
 }
 
-forest_plot(land$Mean_G, land$NDVI, land$class, lab_1 = "Mean_G", lab_2 = "NDVI")
+forest_plot(validation_test$P49f, validation_test$P49l, validation_test$SelfPerceivedHealth, lab_1 = "I feel good about myself", lab_2 = "I feel values by others")
 
 ########################################################################
 #            Splitting Data into HS and Middle School                  # 
@@ -212,4 +230,11 @@ variable_importance_HS <- data.frame(randomForest::importance(forest_model_HS$fi
 ## Arrange predictors by importance (most to least)
 variable_importance_HS %>% 
   arrange(desc(MeanDecreaseGini)) 
+
+
+
+
+0    1 class.error
+0 14991 2658   0.1506034
+1  5034 5613   0.4728092
 

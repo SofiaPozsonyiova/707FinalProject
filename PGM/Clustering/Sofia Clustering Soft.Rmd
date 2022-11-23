@@ -36,12 +36,9 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
 col_names <- names(na_removed_dat)
 na_removed_dat[,col_names] <- lapply(na_removed_dat[,col_names] , as.numeric)
 
-### TAKING ONLY SAMPLE
-samp <- na_removed_dat %>% group_by(SelfPerceivedHealth) %>% sample_frac(.01)
-
 #Standardize
 #remove outcome (SelfPerceivedHealth) and standardize all other variables
-full_standardized <- samp %>% subset(select = -c(SelfPerceivedHealth, P28)) %>% mutate_all(~(scale(.) %>% as.vector))
+full_standardized <- na_removed_dat %>% subset(select = -c(SelfPerceivedHealth, P28)) %>% mutate_all(~(scale(.) %>% as.vector))
 ```
 
 
@@ -189,8 +186,15 @@ table(psych_health_clus$clus[,1], na_removed_dat$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired')+ 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 24), 
+        plot.title = element_text(size = 20),
+        legend.title = element_text(size=18), 
+        legend.text = element_text(size=18))
       
+       ggsave("/Users/sofiapozsonyiova/Documents/psych_1.png") 
+   
       psych_crosstab_5 <- CrossTable(psych_health_clus$clus[,1], na_removed_dat$P28, prop.chisq = FALSE)
       psych_prop_5 <- 100*psych_crosstab_5$prop.col
       
@@ -199,14 +203,26 @@ table(psych_health_clus$clus[,1], na_removed_dat$SelfPerceivedHealth)
         geom_bar(stat = "identity")+
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
-        ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
+        ggtitle(label = "Prop Psychological Health Cluster in Self-Perceived Health Groups")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired')+  
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 24), 
+        plot.title = element_text(size = 20),
+        legend.title = element_text(size=18), 
+        legend.text = element_text(size=18))
       
+       ggsave("/Users/sofiapozsonyiova/Documents/psych_5.png")
+    
+     
+    
       grid.arrange(psych_binary, psych_5, nrow = 1, ncol = 2)
-      
+    
 psychological_clusters <- as.data.frame(psych_health_clus$U)
 psychological_clusters$subject <- rownames(psychological_clusters)
-save(psychological_clusters,file ="/Users/sdm98/Documents/GitHub/Private707/data/psychological_clusters.RData")
+# save(psychological_clusters,file ="/Users/sdm98/Documents/GitHub/Private707/data/psychological_clusters.RData")
+
+
+
 
 ```
 
