@@ -16,6 +16,7 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Clust
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Cluster Data/ClusterTest.RData")
 ```
    
+# Logistic regression with all 5 clusters
 ```{r}
 # Select only necessary variables
 Train <- ClusterTrain %>% subset(select = c(Clus1_physical,
@@ -70,4 +71,56 @@ misClassError(Test$SelfPerceivedHealth, predicted, threshold=optimal)
 # Plot ROC Curve
 plotROC(Test1$SelfPerceivedHealth, predicted)
 ```
+    
+# Logistic regression with top 3 clusters
+```{r}
+# Select only necessary variables
+Train3 <- ClusterTrain %>% subset(select = c(Clus1_physical,
+                                            Clus1_social,
+                                            Clus1_psychological,
+                                            SelfPerceivedHealth))
+Test3 <- ClusterTest %>% subset(select = c(Clus1_physical,
+                                          Clus1_social,
+                                          Clus1_psychological,
+                                          SelfPerceivedHealth))
+```
+   
+```{r}
+# Run logistic regression model
+logistic_reg3 <- glm(SelfPerceivedHealth ~ ., data=Train3, family="binomial")
+
+# View model summary
+summary(logistic_reg3)
+```
+    
+```{r}
+# Predict on test data
+predicted3 <- predict(logistic_reg3, Test3, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal3 <- optimalCutoff(Test3$SelfPerceivedHealth, predicted3)[1]
+optimal3
+```
+   
+```{r}
+# Run confusion matrix
+confusionMatrix(Test3$SelfPerceivedHealth, predicted3)
+```
+    
+```{r}
+# Calculate sensitivity
+sensitivity(Test3$SelfPerceivedHealth, predicted3)
+
+# Calculate specificity
+specificity(Test3$SelfPerceivedHealth, predicted3)
+
+# Calculate total missclassification error rate
+misClassError(Test3$SelfPerceivedHealth, predicted3, threshold=optimal3)
+```
+    
+```{r}
+# Plot ROC Curve
+plotROC(Test3$SelfPerceivedHealth, predicted3)
+```
+
 
