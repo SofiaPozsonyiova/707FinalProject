@@ -115,8 +115,20 @@ sumtable(na_removed_dat)
 SelfPerceivedHealth (P28):     
 0 = Great Health 
 1 = Poor or Fair Health
-```{r}
-na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) 
+```{r fig.height=3,fig.width=3}
+na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,           ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth)) 
+
+
+levels(na_removed_dat$SelfPerceivedHealth)
+
+ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
+geom_bar(fill = "cornflowerblue") +
+geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c( 'Good','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/selfperceivedhealth.png")
+
+
+t <- glm(SelfPerceivedHealth ~ as.numeric(P49f) + as.numeric(P49l) + as.numeric(P26a) + as.numeric(P45) + as.numeric(P37), family = binomial, data = na_removed_dat)
+exp(coef(t))
 ```
 
 ```{r}
