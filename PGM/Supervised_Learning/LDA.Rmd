@@ -73,15 +73,25 @@ predictions_val <- predict(lda_model, Validation_Standardized)
 # Model accuracy for test data
 mean(predictions$class==Test_Standardized$SelfPerceivedHealth)
 
+# Sensitivity for test data
+sensitivity(Test_Standardized$SelfPerceivedHealth, predictions$class)
+
+# Specificity for test data
+specificity(Test_Standardized$SelfPerceivedHealth, predictions$class)
+
 # Model accuracy for validation data (final test)
 mean(predictions_val$class==Validation_Standardized$SelfPerceivedHealth)
 
+# Sensitivity for validation data (final test)
+sensitivity(Validation_Standardized$SelfPerceivedHealth, predictions_val$class)
+
+# Specificity for validation data (final test)
+specificity(Validation_Standardized$SelfPerceivedHealth, predictions_val$class)
+
 # Plot histogram of LDA on test data
-predictions_training <- predict(lda_model, Train_Standardized)
-ldahist(data = predictions_training$x[,1], g=Train_Standardized$SelfPerceivedHealth)
+ldahist(data = predictions$x[,1], g=Train_Standardized$SelfPerceivedHealth)
 
 # Plot histogram of LDA on validation data
-predictions_val <- predict(lda_model, Validation_Standardized)
 ldahist(data = predictions_val$x[,1], g=Validation_Standardized$SelfPerceivedHealth)
 
 # Save training data and predictions in dataframe for plot
