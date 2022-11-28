@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Load libraries
 library(tidyverse)
 library(InformationValue)
+library(lmtest)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Train.RData")
@@ -390,6 +391,45 @@ ggroc(rocobj) +
           axis.title = element_text(size=24),
           plot.title = element_text(size=24))
 dev.off()
+```
+   
+# Determine best model
+```{r}
+## Likelihood ratio tests
+
+# LRT for full model and model with 20 predictors
+lrtest(logistic_reg, logistic_reg20)
+
+# LRT for full model and model with 5 predictors
+lrtest(logistic_reg, logistic_reg5)
+
+
+# LRT for full model and model with 2 predictors
+lrtest(logistic_reg, logistic_reg2)
+
+
+# LRT for full model and model with 1 predictor
+lrtest(logistic_reg, logistic_reg1)
+
+# LRT for model with 20 predictors and model with 5 predictors
+lrtest(logistic_reg20, logistic_reg5)
+
+
+# LRT for model with 20 predictors and model with 2 predictors
+lrtest(logistic_reg20, logistic_reg2)
+
+
+# LRT for model with 20 predictors and model with 1 predictor
+lrtest(logistic_reg20, logistic_reg1)
+
+# LRT for model with 5 predictors and model with 2 predictors
+lrtest(logistic_reg5, logistic_reg2)
+
+# LRT for model with 5 predictors and model with 1 predictor
+lrtest(logistic_reg5, logistic_reg1)
+
+# LRT for model with 2 predictors and model with 1 predictor
+lrtest(logistic_reg2, logistic_reg1)
 ```
 
 
