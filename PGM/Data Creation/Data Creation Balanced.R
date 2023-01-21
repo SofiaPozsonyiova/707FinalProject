@@ -77,13 +77,22 @@ full_dat %>%
 
 
 #----------------------- Combining and Redefining Variables  -----------------------
-
+# REDEFINING SELF PERCEIVED HEALTH
 # SelfPerceivedHealth (P28)    
 # 0 = Great Health 
 # 1 = Poor or Fair Health
 
-# 'Excellent', 'Very good', 'Good', 'Fair','Poor'
-na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) 
+# 0 = '1 = Excellent', '2 = Very good' = GOOD HEALTH  
+# 1 = '4 = Fair','5 = Poor'= POOR HEALTH 
+# NA = '3 = Good'
+na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,ifelse(SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1, NA)))  %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth)) 
+
+plot_bar(na_removed_dat$SelfPerceivedHealth)
+na_removed_dat %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
 
 # QC:
 # na_removed_dat %>%
@@ -347,17 +356,38 @@ na_removed_dat[,fac_col_names] <- lapply(na_removed_dat[,fac_col_names] , as.fac
 
 na_removed_dat[,num_col_names] <- lapply(na_removed_dat[,num_col_names] , as.numeric)
 
+#----------------------- Balancing Data -----------------------
+# 1 0                   31359 0.624
+# 2 NA                  13506 0.269
+# 3 1                    5412 0.108
+
+grouped_data <- na_removed_dat %>%
+  group_by(SelfPerceivedHealth) %>%
+  mutate(size=n())
+
+grouped_data2 <-grouped_data  %>%
+  sample_n(size=5412,replace = TRUE) %>%
+  ungroup() 
+
+CLEANDAT <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
+
+CLEANDAT %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+
 
 #----------------------- Splitting Data -----------------------
 # Splitting into final testing and validation set
 set.seed(707)
-sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,0.2))
+sample <- sample(c(TRUE, FALSE), nrow(CLEANDAT), replace=TRUE, prob=c(0.8,0.2))
 
 # Final Test 
-final_test <- na_removed_dat[!sample, ]
+final_test <- CLEANDAT[!sample, ]
 
 # Training 
-ModelDev  <- na_removed_dat[sample, ]
+ModelDev  <- CLEANDAT[sample, ]
 sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.70,0.30))
 
 ## Splitting training further 
@@ -366,9 +396,10 @@ Test <- ModelDev[!sample2, ]
 
 #----------------------- Saving out data  -----------------------
 
-# save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
-# save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/FinalTest.RData")
-# save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
-# save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")
-# save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev.RData")
+# save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
+save(CLEANDAT,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
+save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalTest.RData")
+save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train.RData")
+save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Test.RData")
+save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev.RData")
 
