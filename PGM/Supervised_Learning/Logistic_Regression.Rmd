@@ -192,6 +192,9 @@ logistic_reg5 <- glm(SelfPerceivedHealth ~ ., data=Train_sub5, family="binomial"
 # View model summary
 summary(logistic_reg5)
 
+# Find odds ratios for coefficients
+exp(coef(logistic_reg5))
+
 
 # Test data
 # Predict on test data
@@ -368,7 +371,7 @@ plotROC(Val_sub1$SelfPerceivedHealth, predicted1_val)
 
 
 ```{r}
-## Plot ROC curves for poster
+## Plot ROC curves for presentation
 # Load pROC library
 library(pROC)
 
@@ -391,22 +394,59 @@ ggroc(rocobj) +
           axis.title = element_text(size=24),
           plot.title = element_text(size=24))
 dev.off()
+
+## Logistic regression with 126 predictors
+# Save ROC object
+rocobj2 <- roc(Validation1$SelfPerceivedHealth, predicted_validation)
+
+# Save AUC
+myauc2 <- paste("AUC=",round(auc(rocobj2), digits=3), sep='')
+
+# Make and save ROC curve plot
+jpeg("roc_126vars.jpg")
+ggroc(rocobj2) +
+    annotate(geom="text", x=0.25, y=0.7, label=myauc2, size=6) +
+    ggtitle("ROC Curve") + 
+    xlab("Specificity") +
+    ylab("Sensitivity") +
+    theme_classic() +
+    theme(axis.text = element_text(size=20),
+          axis.title = element_text(size=24),
+          plot.title = element_text(size=24))
+dev.off()
+
+## Logistic regression with 5 predictors
+# Save ROC object
+rocobj3 <- roc(Val_sub5$SelfPerceivedHealth, predicted5_val)
+
+# Save AUC
+myauc3 <- paste("AUC=",round(auc(rocobj3), digits=3), sep='')
+
+# Make and save ROC curve plot
+jpeg("roc_5vars.jpg")
+ggroc(rocobj3) +
+    annotate(geom="text", x=0.25, y=0.7, label=myauc3, size=6) +
+    ggtitle("ROC Curve") + 
+    xlab("Specificity") +
+    ylab("Sensitivity") +
+    theme_classic() +
+    theme(axis.text = element_text(size=20),
+          axis.title = element_text(size=24),
+          plot.title = element_text(size=24))
+dev.off()
 ```
    
 # Determine best model
 ```{r}
 ## Likelihood ratio tests
-
 # LRT for full model and model with 20 predictors
 lrtest(logistic_reg, logistic_reg20)
 
 # LRT for full model and model with 5 predictors
 lrtest(logistic_reg, logistic_reg5)
 
-
 # LRT for full model and model with 2 predictors
 lrtest(logistic_reg, logistic_reg2)
-
 
 # LRT for full model and model with 1 predictor
 lrtest(logistic_reg, logistic_reg1)
@@ -414,10 +454,8 @@ lrtest(logistic_reg, logistic_reg1)
 # LRT for model with 20 predictors and model with 5 predictors
 lrtest(logistic_reg20, logistic_reg5)
 
-
 # LRT for model with 20 predictors and model with 2 predictors
 lrtest(logistic_reg20, logistic_reg2)
-
 
 # LRT for model with 20 predictors and model with 1 predictor
 lrtest(logistic_reg20, logistic_reg1)
