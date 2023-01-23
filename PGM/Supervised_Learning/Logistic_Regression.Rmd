@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(InformationValue)
 library(lmtest)
+library(caret)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/ModelDev_Train.RData")
@@ -45,6 +46,9 @@ optimal
 ```{r}
 # Run confusion matrix
 confusionMatrix(Test1$SelfPerceivedHealth, predicted)
+
+# Add optimal threshold (update 1/23/23)
+confusionMatrix(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
 ```
    
 ```{r}
@@ -74,6 +78,9 @@ optimal_val
 
 # Run confusion matrix
 confusionMatrix(Validation1$SelfPerceivedHealth, predicted_validation)
+
+# Add optimal threshold (update 1/23/23)
+confusionMatrix(Validation1$SelfPerceivedHealth, predicted_validation, threshold=optimal_val)
 
 # Calculate accuracy
 ((5434+2202) / (5434+1469+933+2202)) * 100
@@ -141,6 +148,9 @@ optimal20
 # Run confusion matrix
 confusionMatrix(Test_sub20$SelfPerceivedHealth, predicted20)
 
+# Add optimal threshold to confusion matrix (update 1/23/23)
+confusionMatrix(Test_sub20$SelfPerceivedHealth, predicted20, threshold=optimal20)
+
 # Calculate sensitivity
 sensitivity(Test_sub20$SelfPerceivedHealth, predicted20)
 
@@ -166,6 +176,9 @@ optimal20_val
 
 # Run confusion matrix
 confusionMatrix(Val_sub20$SelfPerceivedHealth, predicted20_val)
+
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Val_sub20$SelfPerceivedHealth, predicted20_val, threshold=optimal20_val)
 
 # Calculate accuracy
 ((5402+2126) / (5402+1545+965+2126))*100
@@ -207,6 +220,9 @@ optimal5
 # Run confusion matrix
 confusionMatrix(Test_sub5$SelfPerceivedHealth, predicted5)
 
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Test_sub5$SelfPerceivedHealth, predicted5, threshold=optimal5)
+
 # Calculate sensitivity
 sensitivity(Test_sub5$SelfPerceivedHealth, predicted5)
 
@@ -230,6 +246,9 @@ optimal5_val
 
 # Run confusion matrix
 confusionMatrix(Val_sub5$SelfPerceivedHealth, predicted5_val)
+
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Val_sub5$SelfPerceivedHealth, predicted5_val, threshold=optimal5_val)
 
 # Calculate accuracy
 ((5318+2005) / (5318+1666+1049+2005)) * 100
@@ -268,6 +287,9 @@ optimal2
 # Run confusion matrix
 confusionMatrix(Test_sub2$SelfPerceivedHealth, predicted2)
 
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Test_sub2$SelfPerceivedHealth, predicted2, threshold=optimal2)
+
 # Calculate sensitivity
 sensitivity(Test_sub2$SelfPerceivedHealth, predicted2)
 
@@ -291,6 +313,9 @@ optimal2_val
 
 # Run confusion matrix
 confusionMatrix(Val_sub2$SelfPerceivedHealth, predicted2_val)
+
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Val_sub2$SelfPerceivedHealth, predicted2_val, threshold=optimal2_val)
 
 # Calculate accuracy
 ((5494+1709) / (5494+1709+873+1962)) * 100
@@ -329,6 +354,9 @@ optimal1
 # Run confusion matrix
 confusionMatrix(Test_sub1$SelfPerceivedHealth, predicted1)
 
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Test_sub1$SelfPerceivedHealth, predicted1, threshold=optimal1)
+
 # Calculate sensitivity
 sensitivity(Test_sub1$SelfPerceivedHealth, predicted1)
 
@@ -352,6 +380,9 @@ optimal1_val
 
 # Run confusion matrix
 confusionMatrix(Val_sub1$SelfPerceivedHealth, predicted1_val)
+
+# Add optimal threshold to confusion matrix (Update 1/23/23)
+confusionMatrix(Val_sub1$SelfPerceivedHealth, predicted1_val, threshold=optimal1_val)
 
 # Calculate accuracy
 ((5021+2026) / (5021+1645+1346+2026)) * 100
