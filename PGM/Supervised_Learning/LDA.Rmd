@@ -79,6 +79,9 @@ sensitivity(Test_Standardized$SelfPerceivedHealth, predictions$class)
 # Specificity for test data
 specificity(Test_Standardized$SelfPerceivedHealth, predictions$class)
 
+# Confusion matrix
+confusionMatrix(predictions$class, Test_Standardized$SelfPerceivedHealth)
+
 # Model accuracy for validation data (final test)
 mean(predictions_val$class==Validation_Standardized$SelfPerceivedHealth)
 
@@ -87,6 +90,9 @@ sensitivity(Validation_Standardized$SelfPerceivedHealth, predictions_val$class)
 
 # Specificity for validation data (final test)
 specificity(Validation_Standardized$SelfPerceivedHealth, predictions_val$class)
+
+# Confusion Matrix
+confusionMatrix(predictions_val$class, Validation_Standardized$SelfPerceivedHealth)
 
 # Plot histogram of LDA on test data
 ldahist(data = predictions$x[,1], g=Train_Standardized$SelfPerceivedHealth)
@@ -116,6 +122,9 @@ dev.off()
 # Run prediction function
 pred <- prediction(as.numeric(predictions$class), Test_Standardized$SelfPerceivedHealth)
 
+# Confusion Matrix
+confusionMatrix(predictions$class, Test_Standardized$SelfPerceivedHealth)
+
 # Run performance function
 perf <- performance(pred, "tpr", "fpr")
 
@@ -132,6 +141,9 @@ print(auc)
 ## Validation set
 # Run prediction function
 pred_val <- prediction(as.numeric(predictions_val$class), Validation_Standardized$SelfPerceivedHealth)
+
+# Confusion Matrix
+confusionMatrix(predictions_val$class, Validation_Standardized$SelfPerceivedHealth)
 
 # Run performance function
 perf_val <- performance(pred_val, "sens", "spec")
