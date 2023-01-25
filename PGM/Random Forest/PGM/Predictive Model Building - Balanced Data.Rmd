@@ -246,7 +246,11 @@ var_imp5<-var_imp5 %>%
 var_imp5
 ```
 
-
+P49f: I feel good about my future.
+P49l: I feel valued and appreciated by others.
+P26a: Sports teams, such as park and rec teams, school teams, in-house teams or traveling teams.
+P37: During the last 7 days, on how many days were you physically active for a total of AT LEAST 60 MINUTES PER DAY?
+P45: During a typical school night, how many hours of sleep do you get?
 
 ## Predictions 
 
@@ -298,11 +302,11 @@ table(final_test$SelfPerceivedHealth, y_hatsAll_val)
 
 ```{r}
 # Error calculation
-rowtot_0 = 5382 + 985
-985/rowtot_0
+rowtot_0 = 1129 + 0
+0/rowtot_0
 
-rowtot_1 = 1459 + 2212
-1459/rowtot_1
+rowtot_1 = 0 + 1018
+0/rowtot_1
 ```
 
 
@@ -414,6 +418,12 @@ rowtot_0 = 867 + 262
 rowtot_1 = 213 + 805
 213/rowtot_1
 ```
+
+
+```{r}
+
+```
+
 
 
 
