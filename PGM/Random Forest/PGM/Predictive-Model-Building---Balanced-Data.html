@@ -854,12 +854,12 @@ table(Test$SelfPerceivedHealth, y_hatsAll)</code></pre>
 ##   0 1264    0
 ##   1    0 1355</code></pre>
 <pre class="r"><code># Error calculation
-rowtot_0 = 6246 + 1097
-1097/rowtot_0</code></pre>
-<pre><code>## [1] 0.149394</code></pre>
-<pre class="r"><code>rowtot_1 = 1889 + 2711
-1889/rowtot_1</code></pre>
-<pre><code>## [1] 0.4106522</code></pre>
+rowtot_0 = 1264 + 0
+0/rowtot_0</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>rowtot_1 = 0 + 1355
+0/rowtot_1</code></pre>
+<pre><code>## [1] 0</code></pre>
 </div>
 <div id="final-test-set" class="section level3">
 <h3>Final Test Set</h3>
@@ -924,12 +924,12 @@ y_hats20_val &lt;- predict(
 ## Print the accuracy
 accuracy &lt;- mean(y_hats20_val == final_test$SelfPerceivedHealth)*100
 cat(&#39;Accuracy on testing data: &#39;, round(accuracy, 2), &#39;%&#39;,  sep=&#39;&#39;)</code></pre>
-<pre><code>## Accuracy on testing data: 84.07%</code></pre>
+<pre><code>## Accuracy on testing data: 84.02%</code></pre>
 <pre class="r"><code># Confusion matrix 
 table(final_test$SelfPerceivedHealth, y_hats20_val)</code></pre>
 <pre><code>##    y_hats20_val
 ##       0   1
-##   0 936 193
+##   0 935 194
 ##   1 149 869</code></pre>
 <pre class="r"><code># Error calculation
 rowtot_0 = 934 + 195
@@ -952,12 +952,12 @@ y_hats5 &lt;- predict(
 ## Print the accuracy
 accuracy &lt;- mean(y_hats5 == Test$SelfPerceivedHealth)*100
 cat(&#39;Accuracy on testing data: &#39;, round(accuracy, 2), &#39;%&#39;,  sep=&#39;&#39;)</code></pre>
-<pre><code>## Accuracy on testing data: 79.65%</code></pre>
+<pre><code>## Accuracy on testing data: 79.61%</code></pre>
 <pre class="r"><code># Confusion matrix 
 table(Test$SelfPerceivedHealth, y_hats5)</code></pre>
 <pre><code>##    y_hats5
 ##        0    1
-##   0  999  265
+##   0  998  266
 ##   1  268 1087</code></pre>
 <pre class="r"><code># Error calculation
 rowtot_0 = 999 + 265
@@ -977,12 +977,12 @@ y_hats5_val &lt;- predict(
 ## Print the accuracy
 accuracy &lt;- mean(y_hats5_val == final_test$SelfPerceivedHealth)*100
 cat(&#39;Accuracy on testing data: &#39;, round(accuracy, 2), &#39;%&#39;,  sep=&#39;&#39;)</code></pre>
-<pre><code>## Accuracy on testing data: 77.69%</code></pre>
+<pre><code>## Accuracy on testing data: 77.64%</code></pre>
 <pre class="r"><code># Confusion matrix 
 table(final_test$SelfPerceivedHealth, y_hats5_val)</code></pre>
 <pre><code>##    y_hats5_val
 ##       0   1
-##   0 869 260
+##   0 868 261
 ##   1 219 799</code></pre>
 <pre class="r"><code># Error calculation
 rowtot_0 = 867 + 262

@@ -275,11 +275,11 @@ table(Test$SelfPerceivedHealth, y_hatsAll)
 
 ```{r}
 # Error calculation
-rowtot_0 = 6246 + 1097
-1097/rowtot_0
+rowtot_0 = 1264 + 0
+0/rowtot_0
 
-rowtot_1 = 1889 + 2711
-1889/rowtot_1
+rowtot_1 = 0 + 1355
+0/rowtot_1
 ```
 
 
