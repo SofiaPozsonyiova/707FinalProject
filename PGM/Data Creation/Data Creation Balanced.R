@@ -370,7 +370,7 @@ grouped_data2 <-grouped_data  %>%
   ungroup() 
 
 CLEANDAT <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
-
+CLEANDAT <- CLEANDAT %>% select(-size)
 CLEANDAT %>%
   group_by(SelfPerceivedHealth) %>%
   summarise(cnt = n()) %>%
