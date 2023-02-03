@@ -21,7 +21,16 @@ load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balan
 # Look at correlation between P49a and P49f variables
 cor.test(Train$P49a, Train$P49f)
 
-cor(Train$P49a, Train$P49f)
+Train$P49a <- as.factor(Train$P49a)
+Train$P49f <- as.factor(Train$P49f)
+
+# Create scatterplot
+ggplot(aes(P49a, P49f), data=Train) +
+    geom_jitter()
+
+table(Train$P49f, Train$P49a)
+
+Train %>% group_by(P49a, P49f) %>% summarise(n())
 ```
      
 ```{r}
