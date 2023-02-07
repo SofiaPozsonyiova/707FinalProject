@@ -33,6 +33,9 @@ names(dimnames(counts_table)) <- c("P49f", "P49a")
 counts_table
 
 Train %>% group_by(P49a, P49f) %>% summarise(n())
+
+# Create heatmap
+heatmap(counts_table, Rowv=NA, Colv=NA)
 ```
      
 ```{r}
