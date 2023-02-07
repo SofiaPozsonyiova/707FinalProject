@@ -1,0 +1,85 @@
+---
+title: "Logistic Regression on Balanced Data"
+author: "Mairead Dillon"
+date: '2023-02-02'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load libraries
+library(tidyverse)
+library(InformationValue)
+
+# Load data
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/ModelDev_Train.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/ModelDev_Test.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/FinalTest.RData")
+```
+     
+```{r}
+# Look at correlation between P49a and P49f variables
+cor.test(Train$P49a, Train$P49f)
+
+Train$P49a <- as.factor(Train$P49a)
+Train$P49f <- as.factor(Train$P49f)
+
+# Create scatterplot
+ggplot(aes(P49a, P49f), data=Train) +
+    geom_jitter()
+
+counts_table <- table(Train$P49f, Train$P49a)
+names(dimnames(counts_table)) <- c("P49f", "P49a")
+counts_table
+
+Train %>% group_by(P49a, P49f) %>% summarise(n())
+```
+     
+```{r}
+# Get rid of duplicate variable in datasets
+Train1 <- Train %>% subset(select = -c(P28))
+Test1 <- Test %>% subset(select = -c(P28))
+Final1 <- final_test %>% subset(select = -c(P28))
+```
+    
+```{r}
+# Run logistic regression model on all variables
+logistic_reg <- glm(SelfPerceivedHealth ~ ., data=Train1, family="binomial")
+
+# View model summary
+summary(logistic_reg)
+```
+    
+```{r}
+# Predict on test data
+predicted <- predict(logistic_reg, Test1, type="response")
+
+# Find optimal cutoff probability to use to maximize accuracy
+optimal <- optimalCutoff(Test1$SelfPerceivedHealth, predicted)[1]
+optimal
+```
+    
+```{r}
+# Run confusion matrix
+confusionMatrix(Test1$SelfPerceivedHealth, predicted)
+
+# Add optimal threshold
+confusionMatrix(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
+```
+    
+```{r}
+# Calculate sensitivity
+sensitivity(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
+
+# Calculate specificity
+specificity(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
+
+# Calculate total missclassification error rate
+misClassError(Test1$SelfPerceivedHealth, predicted, threshold=optimal)
+```
+     
+```{r}
+# Plot ROC Curve
+plotROC(Test1$SelfPerceivedHealth, predicted)
+```
+

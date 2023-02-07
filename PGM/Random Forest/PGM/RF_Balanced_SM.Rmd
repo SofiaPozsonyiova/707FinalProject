@@ -26,6 +26,7 @@ pre[class] {
 
 
 ```{r message=FALSE, warning=FALSE}
+set.seed(707)
 # Libraries
 library(ggplot2)
 library(gridExtra)
@@ -44,9 +45,9 @@ library(infer)
 ## Data 
 ```{r}
 # Loading in data from github
-load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Train.RData")
-load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Test.RData")
-load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalTest.RData")
+# load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Train.RData")
+# load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Test.RData")
+# load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalTest.RData")
 ```
 
 ```{r}
@@ -62,6 +63,7 @@ Train_sub5 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P34,P49l
 
 ### All 
 ```{r cache = TRUE}
+set.seed(707)
 # Initializing Random Forest
 forest_modelAll <- train(
   SelfPerceivedHealth ~ ., 
@@ -78,6 +80,7 @@ forest_modelAll <- train(
 
 ### Sub 20 
 ```{r cache = TRUE}
+set.seed(707)
 # Initializing Random Forest
 forest_model20 <- train(
   SelfPerceivedHealth ~ ., 
@@ -89,8 +92,26 @@ forest_model20 <- train(
   na.action = na.omit)
 ```
 
+```{r cache = TRUE}
+library(iml)
+library(randomForest)
+rf <- randomForest(SelfPerceivedHealth ~ ., data = Train_sub20, ntree = 100)
+X <- Train_sub20[which(names(Train_sub20) != "SelfPerceivedHealth")]
+predictor <- Predictor$new(rf, data = X, y = Train_sub20$SelfPerceivedHealth)
+shapley <- Shapley$new(predictor, x.interest = X[1, ])
+shapley$plot()
+shapley$explain(x.interest = X[2, ])
+shapley$plot()
+```
+
+
+
+
+
+
 ### Sub 5 
 ```{r cache = TRUE}
+set.seed(707)
 # Initializing Random Forest
 forest_model5 <- train(
   SelfPerceivedHealth ~ ., 
