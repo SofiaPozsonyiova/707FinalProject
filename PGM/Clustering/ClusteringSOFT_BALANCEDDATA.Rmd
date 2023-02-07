@@ -122,7 +122,7 @@ phys_prop <- 100*phys_crosstab$prop.col
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Physical Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
       
       phys_crosstab_5 <- CrossTable(phys_health_clus$clus[,1], CLEANDAT$P28, prop.chisq = FALSE)
       phys_prop_5 <- 100*phys_crosstab_5$prop.col
@@ -133,7 +133,7 @@ phys_prop <- 100*phys_crosstab$prop.col
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Physical Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2,1))
       
       
       grid.arrange(phys_binary, phys_5, nrow = 1, ncol = 2)
@@ -142,6 +142,21 @@ phys_prop <- 100*phys_crosstab$prop.col
 #physical_clusters$subject <- rownames(physical_clusters)
 #save(physical_clusters,file ="/Users/sdm98/Documents/GitHub/Private707/data/Balanced/physical_clusters.RData")
 ```
+
+```{r}
+#cluster visualization
+fviz_cluster(list(cluster = phys_health_clus$clus[,1],data = phys_health), phys_health, labelsize = 0, main = 'Cluster plot for Physical Health Variables')
+```
+
+```{r}
+#cluster visualization
+ggplot(phys_health, aes(x = as.factor(CLEANDAT$P28), y = P37, color = as.factor(phys_health_clus$clus[,1]))) +
+        geom_point() + 
+        labs(x = "Self-Perceived Health", y = "P37: Physical Activity",color = "Cluster")+
+        ggtitle(label = "Cluster Visualization")+ 
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2,1))
+```
+
 
 
 ```{r}
@@ -188,7 +203,7 @@ table(psych_health_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
       
       psych_crosstab_5 <- CrossTable(psych_health_clus$clus[,1], CLEANDAT$P28, prop.chisq = FALSE)
       psych_prop_5 <- 100*psych_crosstab_5$prop.col
@@ -199,7 +214,7 @@ table(psych_health_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Psychological Health Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
       
       grid.arrange(psych_binary, psych_5, nrow = 1, ncol = 2)
       
@@ -209,7 +224,18 @@ table(psych_health_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
 
 ```
 
+```{r}
+#cluster visualization
+fviz_cluster(list(cluster = psych_health_clus$clus[,1],data = psych_health), psych_health, labelsize = 0, main = 'Cluster plot for Psychological Health Variables')
+```
 
+```{r}
+#cluster visualization
+ggplot(psych_health, aes(y = as.factor(CLEANDAT$P28), x = P49f, color = as.factor(psych_health_clus$clus[,1]))) +
+        geom_jitter() + 
+        labs(y = "Self-Perceived Health", x = "P49f: I feel good about my future",color = "Cluster")+
+        ggtitle(label = "Psychological Health Cluster Visualization")
+```
 
 ```{r}
 #Social Support Related
@@ -370,7 +396,7 @@ table(demo_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Demographic Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
       
       demo_crosstab_5 <- CrossTable(demo_clus$clus[,1], CLEANDAT$P28, prop.chisq = FALSE)
       demo_prop_5 <- 100*demo_crosstab_5$prop.col
@@ -381,7 +407,7 @@ table(demo_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Demographic Cluster in Self-Perceived Health Groups") + 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'), palette = 'Paired', limits = c(2, 1))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'), palette = 'Paired', limits = c(1, 2))
       
       
       grid.arrange(demo_binary, demo_5, nrow = 1, ncol = 2)
@@ -413,7 +439,7 @@ table(subset_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Combined Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
       
       
       subset_crosstab_5 <- CrossTable(subset_clus$clus[,1], CLEANDAT$P28, prop.chisq = FALSE)
@@ -425,7 +451,7 @@ table(subset_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
         coord_flip()+
         labs(x = "Self-Perceived Health", y = "Percentage",fill = "Cluster")+
         ggtitle(label = "Proportion of Each Combined Cluster in Self-Perceived Health Groups")+ 
-        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(1, 2))
+        scale_fill_brewer(labels = c('Good Health','Bad Health'),palette = 'Paired', limits = c(2, 1))
       
       
       grid.arrange(subset_binary, subset_5, nrow = 1, ncol = 2)
@@ -433,6 +459,12 @@ table(subset_clus$clus[,1], CLEANDAT$SelfPerceivedHealth)
 
 
 
+```
+
+
+```{r}
+#cluster visualization
+fviz_cluster(list(cluster = subset_clus$clus[,1],data = subset), subset, labelsize = 0, main = 'Cluster plot for All Variables')
 ```
 
 
@@ -472,12 +504,12 @@ data.frame(diff = abs(colMeans(missgood) - colMeans(samegood))) %>% filter(diff 
 P47a_missgood <-  missgood %>% group_by(P47a) %>% summarise(n=n())%>%
   ggplot(., aes(x = P47a, y = n))+
   geom_col(stat = "identity")+
-  ggtitle(label = "Misclassified Responses to P47a where SelfPerceivedHealth = 1")
+  ggtitle(label = "P47a: Misclassified SPH = 1")
 
 P47a_samegood <-  samegood %>% group_by(P47a) %>% summarise(n=n())%>%
   ggplot(., aes(x = P47a, y = n))+
   geom_col(stat = "identity")+
-  ggtitle(label = "Correctly Classified Responses to P47a where SelfPerceivedHealth = 1")
+  ggtitle(label = "P47a: Correct SPH = 1")
 
 grid.arrange(P47a_missgood, P47a_samegood, nrow = 1, ncol = 2)
 
@@ -486,12 +518,12 @@ grid.arrange(P47a_missgood, P47a_samegood, nrow = 1, ncol = 2)
 P47a_misspoor <-  misspoor %>% group_by(P47a) %>% summarise(n=n())%>%
   ggplot(., aes(x = P47a, y = n))+
   geom_col(stat = "identity")+
-  ggtitle(label = "Misclassified Responses to P47a where SelfPerceivedHealth = 2")
+  ggtitle(label = "P47a: Misclassified SPH = 2")
 
 P47a_samepoor <-  samepoor %>% group_by(P47a) %>% summarise(n=n())%>%
   ggplot(., aes(x = P47a, y = n))+
   geom_col(stat = "identity")+
-  ggtitle(label = "Correctly Classified Responses to P47a where SelfPerceivedHealth = 2")
+  ggtitle(label = "P47a: Correct SPH = 2")
 
 grid.arrange(P47a_misspoor, P47a_samepoor, nrow = 1, ncol = 2)
 
