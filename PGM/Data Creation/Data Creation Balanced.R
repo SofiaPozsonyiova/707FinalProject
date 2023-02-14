@@ -356,50 +356,50 @@ na_removed_dat[,fac_col_names] <- lapply(na_removed_dat[,fac_col_names] , as.fac
 
 na_removed_dat[,num_col_names] <- lapply(na_removed_dat[,num_col_names] , as.numeric)
 
+#----------------------- Splitting Data -----------------------
+# Splitting into final testing and validation set
+set.seed(707)
+sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,0.2))
+
+# Final Test 
+final_test <- na_removed_dat[!sample, ]
+
+# Training 
+ModelDev  <- na_removed_dat[sample, ]
+
+
+# ## Splitting training further 
+# Train_Model_Dev <- ModelDev[sample2, ]
+# Test_Model_Dev <- ModelDev[!sample2, ]
+# 
+
 #----------------------- Balancing Data -----------------------
 # 1 0                   31359 0.624
 # 2 NA                  13506 0.269
 # 3 1                    5412 0.108
 
-grouped_data <- na_removed_dat %>%
+grouped_data <- ModelDev %>%
   group_by(SelfPerceivedHealth) %>%
   mutate(size=n())
 
 grouped_data2 <-grouped_data  %>%
-  sample_n(size=5412,replace = TRUE) %>%
+  sample_n(size=4359,replace = TRUE) %>%
   ungroup() 
 
-CLEANDAT <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
-CLEANDAT <- CLEANDAT %>% select(-size)
-CLEANDAT %>%
+Train_Model_Dev_Balanced <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
+Train_Model_Dev_Balanced <- Train_Model_Dev_Balanced %>% select(-size)
+Train_Model_Dev_Balanced %>%
   group_by(SelfPerceivedHealth) %>%
   summarise(cnt = n()) %>%
   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
   arrange(desc(freq))
 
-
-#----------------------- Splitting Data -----------------------
-# Splitting into final testing and validation set
-set.seed(707)
-sample <- sample(c(TRUE, FALSE), nrow(CLEANDAT), replace=TRUE, prob=c(0.8,0.2))
-
-# Final Test 
-final_test <- CLEANDAT[!sample, ]
-
-# Training 
-ModelDev  <- CLEANDAT[sample, ]
-sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.70,0.30))
-
-## Splitting training further 
-Train <- ModelDev[sample2, ]
-Test <- ModelDev[!sample2, ]
-
 #----------------------- Saving out data  -----------------------
 
 # save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
-save(CLEANDAT,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
-save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalTest.RData")
-save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train.RData")
-save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Test.RData")
-save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev.RData")
+# save(CLEANDAT,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
+save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_Unbalanced.RData")
+save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_Balanced.RData")
+# save(Test_Model_Dev,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Test_Unbalanced.RData")
+# save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Unba.RData")
 
