@@ -1,0 +1,183 @@
+---
+title: "KNN Balanced"
+author: "Shannon Murphy"
+date: "2/6/2023"
+output: html_document
+---
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 100px;
+}
+```
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+
+```{r message=FALSE, warning=FALSE}
+# Libraries
+library(tidyverse)
+library(class)
+library(gmodels)
+```
+
+
+# All Variables 
+
+## Data 
+```{r}
+# Loading in data from github
+load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Train.RData")
+load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Test.RData")
+load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalTest.RData")
+```
+
+```{r}
+# Selecting clusters that are needed 
+Train_All <- Train %>% select(-P28)
+Train_sub13 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P34,P49l,P37,P26a,P45,P47b,P49h,Suicide,P14a,SelfPerceivedHealth))
+
+Train_sub5 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P34,P49l,SelfPerceivedHealth))
+
+Test_All <- Test %>% select(-P28)
+Test_sub13 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P34,P49l,P37,P26a,P45,P47b,P49h,Suicide,P14a,SelfPerceivedHealth))
+
+Test_sub5 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P34,P49l,SelfPerceivedHealth))
+
+# Split x and y
+x_train <- sapply(Train_All %>% select(-SelfPerceivedHealth),as.numeric)
+x_train13 <- sapply(Train_sub13 %>% select(-SelfPerceivedHealth),as.numeric)
+x_train5 <- sapply(Train_sub5 %>% select(-SelfPerceivedHealth),as.numeric)
+
+x_test <- sapply(Test_All %>% select(-SelfPerceivedHealth), as.numeric)
+x_test13 <- sapply(Test_sub13 %>% select(-SelfPerceivedHealth),as.numeric)
+x_test5 <- sapply(Test_sub5 %>% select(-SelfPerceivedHealth),as.numeric)
+
+y_train <- sapply(Train_All %>% select(SelfPerceivedHealth), as.numeric)
+y_test <- sapply(Test %>% select(SelfPerceivedHealth),as.numeric)
+```
+
+
+## KNN
+
+### All 
+```{r cache = TRUE}
+# Initializing KNN
+numk <- sqrt(dim(Train_All)[1])
+knnresult <- knn(x_train, x_test, y_train, k=numk)
+```
+
+```{r}
+CrossTable(knnresult, y_test, prop.chisq = FALSE)
+
+ctab <- table(knnresult,y_test)
+
+#accuracy = correct/total
+acc <- (ctab[1,1] + ctab[2,2])/(ctab[1,1] + ctab[1,2] + ctab[2,1] + ctab[2,2])
+acc
+
+#sensitivity = true pos/(true pos + false neg)
+sens <- ctab[2,2]/(ctab[2,2] + ctab[1,2])
+sens
+
+#specificity = true neg/(true neg + false neg)
+spec <- ctab[1,1]/(ctab[1,1] + ctab[2,1])
+spec
+
+#error = 1 - accuracy
+err <- 1-acc
+err
+
+#precision = true pos/(true pos + false pos)
+prec <- ctab[2,2]/(ctab[2,2]+ctab[2,1])
+prec
+```
+
+
+
+### Sub 13
+```{r cache = TRUE}
+# Initializing KNN
+numk <- sqrt(dim(Train_All)[1])
+knnresult13 <- knn(x_train13, x_test13, y_train, k=numk)
+```
+
+```{r}
+CrossTable(knnresult13, y_test, prop.chisq = FALSE)
+
+ctab13 <- table(knnresult13,y_test)
+
+#accuracy = correct/total
+acc13 <- (ctab13[1,1] + ctab13[2,2])/(ctab13[1,1] + ctab13[1,2] + ctab13[2,1] + ctab13[2,2])
+acc13
+
+#sensitivity = true pos/(true pos + false neg)
+sens13 <- ctab13[2,2]/(ctab13[2,2] + ctab13[1,2])
+sens13
+
+#specificity = true neg/(true neg + false neg)
+spec13 <- ctab13[1,1]/(ctab13[1,1] + ctab13[2,1])
+spec13
+
+#error = 1 - accuracy
+err13 <- 1-acc13
+err13
+
+#precision = true pos/(true pos + false pos)
+prec13 <- ctab13[2,2]/(ctab13[2,2]+ctab13[2,1])
+prec13
+```
+
+
+### Sub 5 
+```{r cache = TRUE}
+# Initializing KNN
+numk <- sqrt(dim(Train_All)[1])
+knnresult5 <- knn(x_train5, x_test5, y_train, k=numk)
+```
+
+```{r}
+CrossTable(knnresult5, y_test, prop.chisq = FALSE)
+
+ctab5 <- table(knnresult5,y_test)
+
+#accuracy = correct/total
+acc5 <- (ctab5[1,1] + ctab5[2,2])/(ctab5[1,1] + ctab5[1,2] + ctab5[2,1] + ctab5[2,2])
+acc5
+
+#sensitivity = true pos/(true pos + false neg)
+sens5 <- ctab5[2,2]/(ctab5[2,2] + ctab5[1,2])
+sens5
+
+#specificity = true neg/(true neg + false neg)
+spec5 <- ctab5[1,1]/(ctab5[1,1] + ctab5[2,1])
+spec5
+
+#error = 1 - accuracy
+err5 <- 1-acc5
+err5
+
+#precision = true pos/(true pos + false pos)
+prec5 <- ctab5[2,2]/(ctab5[2,2]+ctab5[2,1])
+prec5
+```
+
+## Results 
+
+```{r message=FALSE}
+
+data.frame(model = c('All','Top 13','Top 5'),accuracy = c(acc, acc13, acc5), sensitivity = c(sens, sens13, sens5), specificity = c(spec, spec13, spec5), precision = c(prec, prec13, prec5))
+
+```
+
