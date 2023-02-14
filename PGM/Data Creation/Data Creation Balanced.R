@@ -33,10 +33,10 @@ dat_sub_named[,col_names] <- lapply(dat_sub_named[,col_names] , factor)
 #----------------------- Exploratory Analysis -----------------------
 
 # Visualizing Missing 
-plot_missing(dat_sub_named)
+# plot_missing(dat_sub_named)
 
 # Visualizing Each Distribution
-plot_bar(dat_sub_named)
+# plot_bar(dat_sub_named)
 
 # Visualizing Outcome 
 ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
@@ -398,8 +398,8 @@ Train_Model_Dev_Balanced %>%
 
 # save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
 # save(CLEANDAT,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
-save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_Unbalanced.RData")
-save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_Balanced.RData")
+save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
 # save(Test_Model_Dev,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Test_Unbalanced.RData")
 # save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Unba.RData")
 
