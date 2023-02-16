@@ -1,0 +1,306 @@
+---
+title: "RF_BalancedTrain_CV"
+author: "Sofia Pozsonyiova"
+date: "2/16/2023"
+output: html_document
+---
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 100px;
+}
+```
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+
+```{r message=FALSE, warning=FALSE}
+set.seed(707)
+# Libraries
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(caret)
+library(rpart)         
+library(rpart.plot)    
+library(class)         
+library(randomForest)  
+library(infer)
+```
+
+# Data 
+
+```{r}
+# Loading in data from github
+# Training 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+
+# Testing 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+```
+
+
+# All Variables: CV 
+
+## Data 
+
+```{r}
+# Selecting clusters that are needed 
+Train_All <- Train_Model_Dev_Balanced %>% select(-P28)
+```
+
+### Training: All Variables Included  
+```{r cache = TRUE}
+# Initializing Random Forest
+forest_modelAll <- train(
+  SelfPerceivedHealth ~ ., 
+  data = Train_All,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(2,12,63,126)),
+  trControl = trainControl(method = "cv",number = 5),
+  metric = "Accuracy",
+  na.action = na.omit,
+  seed = 2023)
+```
+
+```{r}
+# Printing results
+print(forest_modelAll)
+forest_modelAll$results
+```
+
+```{r}
+#Visualizing results 
+plot(forest_modelAll)
+```
+
+```{r}
+# Final model Forest 
+forest_modelAll$finalModel
+```
+
+```{r}
+## Get variable importance, and turn into a data frame
+var_impAll <- varImp(forest_modelAll, scale=FALSE)$importance
+var_impAll <- data.frame(variables=row.names(var_impAll), importance=var_impAll$Overall)
+var_impAll %>% arrange(desc(importance))
+```
+
+
+```{r fig.height=12}
+## Create a plot of variable importance
+var_impAll <- var_impAll %>%
+  arrange(importance) %>%
+  ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+  geom_bar(stat='identity', fill = "cornflowerblue") + 
+  coord_flip() + 
+  xlab('Variables') +
+  labs(title='Random Forest Variable Importance (All predictors)') + ylab("Gini Impurity") + 
+  theme(axis.text = element_text(size = 12), 
+        axis.title = element_text(size = 14))
+#ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
+
+var_impAll
+```
+
+### Validation Set: All Variables Included  
+```{r}
+## Generate predictions
+y_hatsAll_val <- predict(
+  object=forest_modelAll, 
+  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hatsAll_val == final_test$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_all_final <- table(final_test$SelfPerceivedHealth, y_hatsAll_val)
+conf_all_final
+
+confusionMatrix(table(conf_all_final))
+```
+
+
+# Top 12 Variables: CV
+## Data 
+```{r}
+Train_sub12 <- Train_Model_Dev_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P47e,P49h,P34,P26a,P37,P49i,P49p,P49e,SelfPerceivedHealth))
+```
+
+### Training: All Variables Included  
+```{r cache = TRUE}
+# Initializing Random Forest
+forest_model_12 <- train(
+  SelfPerceivedHealth ~ ., 
+  data = Train_sub12,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(2,4,6,12)),
+  trControl = trainControl(method = "cv",number = 5),
+  metric = "Accuracy",
+  na.action = na.omit,
+  seed = 2023)
+```
+
+```{r}
+# Printing results
+print(forest_model_12)
+forest_model_12$results
+```
+
+```{r}
+#Visualizing results 
+plot(forest_model_12)
+```
+
+```{r}
+# Final model Forest 
+forest_model_12$finalModel
+```
+
+```{r}
+## Get variable importance, and turn into a data frame
+var_imp12 <- varImp(forest_model_12, scale=FALSE)$importance
+var_imp12 <- data.frame(variables=row.names(var_imp12), importance=var_imp12$Overall)
+var_imp12 %>% arrange(desc(importance))
+```
+
+
+```{r fig.height=12}
+## Create a plot of variable importance
+var_imp12 <- var_imp12 %>%
+  arrange(importance) %>%
+  ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+  geom_bar(stat='identity', fill = "cornflowerblue") + 
+  coord_flip() + 
+  xlab('Variables') +
+  labs(title='Random Forest Variable Importance (All predictors)') + ylab("Gini Impurity") + 
+  theme(axis.text = element_text(size = 12), 
+        axis.title = element_text(size = 14))
+#ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
+
+var_imp12
+```
+
+### Validation Set: Top 12 
+
+```{r}
+## Generate predictions
+y_hats12 <- predict(
+  object=forest_model_12, 
+  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hats12 == final_test$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_12 <- table(final_test$SelfPerceivedHealth, y_hats12)
+conf_12
+
+confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats12))
+```
+
+P49f	768.8373			
+P49a	460.8534			
+P37	439.7683			
+P50b	423.4315			
+P49l	399.1797			
+
+# Top 5 Variables: CV
+## Data 
+```{r}
+Train_sub4 <- Train_Model_Dev_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+```
+
+### Training: All Variables Included  
+```{r cache = TRUE}
+# Initializing Random Forest
+forest_model_4 <- train(
+  SelfPerceivedHealth ~ ., 
+  data = Train_sub4,
+  method = "rf",
+  tuneGrid = data.frame(mtry = c(1,2,4)),
+  trControl = trainControl(method = "cv",number = 5),
+  metric = "Accuracy",
+  na.action = na.omit,
+  seed = 2023)
+```
+
+```{r}
+# Printing results
+print(forest_model_4)
+forest_model_4$results
+```
+
+```{r}
+#Visualizing results 
+plot(forest_model_4)
+```
+
+```{r}
+# Final model Forest 
+forest_model_4$finalModel
+```
+
+```{r}
+## Get variable importance, and turn into a data frame
+var_imp4 <- varImp(forest_model_4, scale=FALSE)$importance
+var_imp4 <- data.frame(variables=row.names(var_imp4), importance=var_imp4$Overall)
+var_imp4 %>% arrange(desc(importance))
+```
+
+```{r fig.height=12}
+## Create a plot of variable importance
+var_imp4 <- var_imp4 %>%
+  arrange(importance) %>%
+  ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+  geom_bar(stat='identity', fill = "cornflowerblue") + 
+  coord_flip() + 
+  xlab('Variables') +
+  labs(title='Random Forest Variable Importance (All predictors)') + ylab("Gini Impurity") + 
+  theme(axis.text = element_text(size = 12), 
+        axis.title = element_text(size = 14))
+#ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
+
+var_imp4
+```
+
+### Validation Set: Top 4
+
+```{r}
+## Generate predictions
+y_hats4 <- predict(
+  object=forest_model_4, 
+  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hats4 == final_test$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_4 <- table(final_test$SelfPerceivedHealth, y_hats4)
+conf_4
+
+confusionMatrix(table(conf_4))
+```
+
+
+

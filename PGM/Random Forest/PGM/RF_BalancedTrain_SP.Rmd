@@ -268,13 +268,17 @@ Train_sub4 <- Train_Model_Dev_Balanced %>% select(-P28) %>% dplyr::select(c(P49f
 
 ### Training: All Variables Included  
 ```{r cache = TRUE}
+levels(Train_sub4$SelfPerceivedHealth) <- make.names(levels(Train_sub4$SelfPerceivedHealth))
+fitControl <- trainControl(method = "cv",number = 3, returnResamp = "all",
+classProbs = TRUE)
+
 # Initializing Random Forest
 forest_model_4 <- train(
   SelfPerceivedHealth ~ ., 
   data = Train_sub4,
   method = "rf",
   tuneGrid = data.frame(mtry = c(1,2,4)),
-  trControl = trainControl(method = "cv",number = 10),
+  trControl = fitControl,
   metric = "Accuracy",
   na.action = na.omit)
 ```
