@@ -363,6 +363,7 @@ sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,
 
 # Final Test 
 final_test <- na_removed_dat[!sample, ]
+final_test <- final_test[!is.na(final_test$SelfPerceivedHealth), ]
 
 # Training 
 ModelDev  <- na_removed_dat[sample, ]
