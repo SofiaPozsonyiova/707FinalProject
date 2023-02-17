@@ -374,6 +374,23 @@ ModelDev  <- na_removed_dat[sample, ]
 # Test_Model_Dev <- ModelDev[!sample2, ]
 # 
 
+#----------Balancing Validation Set-------------
+grouped_data_test <- final_test %>%
+  group_by(SelfPerceivedHealth) 
+  mutate(size=n())
+
+grouped_data2_test <-grouped_data_test  %>%
+  sample_n(size=1053,replace = TRUE) %>%
+  ungroup() 
+
+Test_Balanced <- grouped_data2_test[!is.na(grouped_data2_test$SelfPerceivedHealth), ]
+Test_Balanced <- Test_Balanced %>% dplyr::select(-size)
+Test_Balanced %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
+
 #----------------------- Balancing Data -----------------------
 # 1 0                   31359 0.624
 # 2 NA                  13506 0.269
@@ -401,6 +418,7 @@ Train_Model_Dev_Balanced %>%
 # save(CLEANDAT,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/SubsetDat.RData")
 save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
 save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+save(Test_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_BalancedUSE.RData")
 # save(Test_Model_Dev,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Test_Unbalanced.RData")
 # save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Unba.RData")
 

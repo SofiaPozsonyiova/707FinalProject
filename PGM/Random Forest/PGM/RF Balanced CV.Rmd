@@ -48,6 +48,7 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev
 
 # Testing 
 load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_BalancedUSE.RData")
 ```
 
 
@@ -114,7 +115,27 @@ var_impAll <- var_impAll %>%
 var_impAll
 ```
 
-### Validation Set: All Variables Included  
+```{r}
+## Generate predictions
+y_hatsAll_val <- predict(
+  object=forest_modelAll, 
+  newdata= Train_All %>% select(-SelfPerceivedHealth))
+
+## Print the accuracy
+accuracy <- mean(y_hatsAll_val == Train_All$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_all_final <- table(Train_All$SelfPerceivedHealth, y_hatsAll_val)
+conf_all_final
+
+confusionMatrix(table(Train_All$SelfPerceivedHealth, y_hatsAll_val))
+```
+
+
+### Unbalanced Validation Set: All Variables Included  
 ```{r}
 ## Generate predictions
 y_hatsAll_val <- predict(
@@ -131,9 +152,28 @@ cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 conf_all_final <- table(final_test$SelfPerceivedHealth, y_hatsAll_val)
 conf_all_final
 
-confusionMatrix(table(conf_all_final))
+confusionMatrix(table(final_test$SelfPerceivedHealth, y_hatsAll_val))
 ```
 
+### Balanced Validation Set: All Variables Included  
+```{r}
+## Generate predictions
+y_hatsAll_val <- predict(
+  object=forest_modelAll, 
+  newdata= Test_Balanced %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hatsAll_val == Test_Balanced$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_all_final <- table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val)
+conf_all_final
+
+confusionMatrix(table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val))
+```
 
 # Top 12 Variables: CV
 ## Data 
@@ -195,7 +235,45 @@ var_imp12 <- var_imp12 %>%
 var_imp12
 ```
 
-### Validation Set: Top 12 
+```{r}
+## Generate predictions
+y_hats12 <- predict(
+  object=forest_model_12, 
+  newdata= Train_sub12 %>% select(-SelfPerceivedHealth))
+
+## Print the accuracy
+accuracy <- mean(y_hats12 == Train_sub12$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_12 <- table(Train_sub12$SelfPerceivedHealth, y_hats12)
+conf_12
+
+confusionMatrix(table(Train_sub12$SelfPerceivedHealth, y_hats12))
+```
+
+### Balanced Validation Set: Top 12
+```{r}
+## Generate predictions
+y_hats12 <- predict(
+  object=forest_model_12, 
+  newdata= Test_Balanced %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hats12 == Test_Balanced$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_12 <- table(Test_Balanced$SelfPerceivedHealth, y_hats12)
+conf_12
+
+confusionMatrix(table(Test_Balanced$SelfPerceivedHealth, y_hats12))
+```
+### Unbalanced Validation Set: Top 12 
 
 ```{r}
 ## Generate predictions
@@ -281,7 +359,45 @@ var_imp4 <- var_imp4 %>%
 var_imp4
 ```
 
-### Validation Set: Top 4
+```{r}
+## Generate predictions
+y_hats4 <- predict(
+  object=forest_model_4, 
+  newdata= Train_sub4 %>% select(-SelfPerceivedHealth))
+
+## Print the accuracy
+accuracy <- mean(y_hats4 == Train_sub4$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_4 <- table(Train_sub4$SelfPerceivedHealth, y_hats4)
+conf_4
+
+confusionMatrix(table(Train_sub4$SelfPerceivedHealth, y_hats4))
+```
+
+### Balanced Validation Set: Top 4
+```{r}
+## Generate predictions
+y_hats4 <- predict(
+  object=forest_model_4, 
+  newdata= Test_Balanced %>% select(-SelfPerceivedHealth,-P28))
+
+## Print the accuracy
+accuracy <- mean(y_hats4 == Test_Balanced$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+```
+
+```{r}
+# Confusion matrix 
+conf_4 <- table(Test_Balanced$SelfPerceivedHealth, y_hats4)
+conf_4
+
+confusionMatrix(table(Test_Balanced$SelfPerceivedHealth, y_hats4))
+```
+### Unbalanced Validation Set: Top 4
 
 ```{r}
 ## Generate predictions
@@ -299,7 +415,7 @@ cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 conf_4 <- table(final_test$SelfPerceivedHealth, y_hats4)
 conf_4
 
-confusionMatrix(table(conf_4))
+confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats4))
 ```
 
 
