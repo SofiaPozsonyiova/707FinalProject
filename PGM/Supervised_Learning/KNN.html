@@ -697,6 +697,200 @@ prec5</code></pre>
 ## 2 Top 12 0.8348245   0.8357421   0.8339069 0.8342111
 ## 3  Top 5 0.8216334   0.8329892   0.8102776 0.8144908</code></pre>
 </div>
+<div id="test-models-on-unbalanced-data" class="section level2">
+<h2>Test Models on Unbalanced Data</h2>
+<div id="all-model" class="section level3">
+<h3>All Model</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_all &lt;- predict(fit_all, x_test)
+
+CrossTable(pred_all, y_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  7420 
+## 
+##  
+##              | y_test 
+##     pred_all |         1 |         2 | Row Total | 
+## -------------|-----------|-----------|-----------|
+##            1 |      5534 |       294 |      5828 | 
+##              |     0.950 |     0.050 |     0.785 | 
+##              |     0.869 |     0.279 |           | 
+##              |     0.746 |     0.040 |           | 
+## -------------|-----------|-----------|-----------|
+##            2 |       833 |       759 |      1592 | 
+##              |     0.523 |     0.477 |     0.215 | 
+##              |     0.131 |     0.721 |           | 
+##              |     0.112 |     0.102 |           | 
+## -------------|-----------|-----------|-----------|
+## Column Total |      6367 |      1053 |      7420 | 
+##              |     0.858 |     0.142 |           | 
+## -------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab &lt;- table(pred_all,y_test)
+
+#accuracy = correct/total
+acc &lt;- (ctab[1,1] + ctab[2,2])/(ctab[1,1] + ctab[1,2] + ctab[2,1] + ctab[2,2])
+acc</code></pre>
+<pre><code>## [1] 0.8481132</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens &lt;- ctab[2,2]/(ctab[2,2] + ctab[1,2])
+sens</code></pre>
+<pre><code>## [1] 0.7207977</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec &lt;- ctab[1,1]/(ctab[1,1] + ctab[2,1])
+spec</code></pre>
+<pre><code>## [1] 0.8691692</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err &lt;- 1-acc
+err</code></pre>
+<pre><code>## [1] 0.1518868</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec &lt;- ctab[2,2]/(ctab[2,2]+ctab[2,1])
+prec</code></pre>
+<pre><code>## [1] 0.4767588</code></pre>
+</div>
+<div id="top-12-1" class="section level3">
+<h3>Top 12</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_12 &lt;- predict(fit_12, x_test12)
+
+CrossTable(pred_12, y_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  7420 
+## 
+##  
+##              | y_test 
+##      pred_12 |         1 |         2 | Row Total | 
+## -------------|-----------|-----------|-----------|
+##            1 |      5194 |       202 |      5396 | 
+##              |     0.963 |     0.037 |     0.727 | 
+##              |     0.816 |     0.192 |           | 
+##              |     0.700 |     0.027 |           | 
+## -------------|-----------|-----------|-----------|
+##            2 |      1173 |       851 |      2024 | 
+##              |     0.580 |     0.420 |     0.273 | 
+##              |     0.184 |     0.808 |           | 
+##              |     0.158 |     0.115 |           | 
+## -------------|-----------|-----------|-----------|
+## Column Total |      6367 |      1053 |      7420 | 
+##              |     0.858 |     0.142 |           | 
+## -------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab12 &lt;- table(pred_12,y_test)
+
+#accuracy = correct/total
+acc12 &lt;- (ctab12[1,1] + ctab12[2,2])/(ctab12[1,1] + ctab12[1,2] + ctab12[2,1] + ctab12[2,2])
+acc12</code></pre>
+<pre><code>## [1] 0.81469</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens12 &lt;- ctab12[2,2]/(ctab12[2,2] + ctab12[1,2])
+sens12</code></pre>
+<pre><code>## [1] 0.8081671</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec12 &lt;- ctab12[1,1]/(ctab12[1,1] + ctab12[2,1])
+spec12</code></pre>
+<pre><code>## [1] 0.8157688</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err12 &lt;- 1-acc12
+err12</code></pre>
+<pre><code>## [1] 0.18531</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec12 &lt;- ctab12[2,2]/(ctab12[2,2]+ctab12[2,1])
+prec12</code></pre>
+<pre><code>## [1] 0.4204545</code></pre>
+</div>
+<div id="top-5-1" class="section level3">
+<h3>Top 5</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_5 &lt;- predict(fit_5, x_test5)
+
+CrossTable(pred_5, y_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  7420 
+## 
+##  
+##              | y_test 
+##       pred_5 |         1 |         2 | Row Total | 
+## -------------|-----------|-----------|-----------|
+##            1 |      4872 |       196 |      5068 | 
+##              |     0.961 |     0.039 |     0.683 | 
+##              |     0.765 |     0.186 |           | 
+##              |     0.657 |     0.026 |           | 
+## -------------|-----------|-----------|-----------|
+##            2 |      1495 |       857 |      2352 | 
+##              |     0.636 |     0.364 |     0.317 | 
+##              |     0.235 |     0.814 |           | 
+##              |     0.201 |     0.115 |           | 
+## -------------|-----------|-----------|-----------|
+## Column Total |      6367 |      1053 |      7420 | 
+##              |     0.858 |     0.142 |           | 
+## -------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab5 &lt;- table(pred_5,y_test)
+
+#accuracy = correct/total
+acc5 &lt;- (ctab5[1,1] + ctab5[2,2])/(ctab5[1,1] + ctab5[1,2] + ctab5[2,1] + ctab5[2,2])
+acc5</code></pre>
+<pre><code>## [1] 0.7721024</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens5 &lt;- ctab5[2,2]/(ctab5[2,2] + ctab5[1,2])
+sens5</code></pre>
+<pre><code>## [1] 0.8138651</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec5 &lt;- ctab5[1,1]/(ctab5[1,1] + ctab5[2,1])
+spec5</code></pre>
+<pre><code>## [1] 0.7651955</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err5 &lt;- 1-acc5
+err5</code></pre>
+<pre><code>## [1] 0.2278976</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec5 &lt;- ctab5[2,2]/(ctab5[2,2]+ctab5[2,1])
+prec5</code></pre>
+<pre><code>## [1] 0.3643707</code></pre>
+</div>
+</div>
+<div id="unabalanced-test-set-results" class="section level2">
+<h2>Unabalanced Test Set Results</h2>
+<pre class="r"><code>data.frame(model = c(&#39;All&#39;,&#39;Top 12&#39;,&#39;Top 5&#39;),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))</code></pre>
+<pre><code>##    model  accuracy sensitivity specificity precision
+## 1    All 0.8481132   0.7207977   0.8691692 0.4767588
+## 2 Top 12 0.8146900   0.8081671   0.8157688 0.4204545
+## 3  Top 5 0.7721024   0.8138651   0.7651955 0.3643707</code></pre>
+</div>
 </div>
 
 
