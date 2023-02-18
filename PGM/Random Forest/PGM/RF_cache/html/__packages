@@ -1,0 +1,10 @@
+ggplot2
+gridExtra
+dplyr
+lattice
+caret
+rpart
+rpart.plot
+class
+randomForest
+infer
