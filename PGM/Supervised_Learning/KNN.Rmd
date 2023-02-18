@@ -215,3 +215,101 @@ prec5
 ```{r}
 data.frame(model = c('All','Top 12','Top 5'),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))
 ```
+
+## Test Models on Unbalanced Data
+
+### All Model
+```{r}
+#get sensitivity/specificity
+pred_all <- predict(fit_all, x_test)
+
+CrossTable(pred_all, y_test, prop.chisq = FALSE)
+
+ctab <- table(pred_all,y_test)
+
+#accuracy = correct/total
+acc <- (ctab[1,1] + ctab[2,2])/(ctab[1,1] + ctab[1,2] + ctab[2,1] + ctab[2,2])
+acc
+
+#sensitivity = true pos/(true pos + false neg)
+sens <- ctab[2,2]/(ctab[2,2] + ctab[1,2])
+sens
+
+#specificity = true neg/(true neg + false neg)
+spec <- ctab[1,1]/(ctab[1,1] + ctab[2,1])
+spec
+
+#error = 1 - accuracy
+err <- 1-acc
+err
+
+#precision = true pos/(true pos + false pos)
+prec <- ctab[2,2]/(ctab[2,2]+ctab[2,1])
+prec
+```
+
+### Top 12
+```{r}
+#get sensitivity/specificity
+pred_12 <- predict(fit_12, x_test12)
+
+CrossTable(pred_12, y_test, prop.chisq = FALSE)
+
+ctab12 <- table(pred_12,y_test)
+
+#accuracy = correct/total
+acc12 <- (ctab12[1,1] + ctab12[2,2])/(ctab12[1,1] + ctab12[1,2] + ctab12[2,1] + ctab12[2,2])
+acc12
+
+#sensitivity = true pos/(true pos + false neg)
+sens12 <- ctab12[2,2]/(ctab12[2,2] + ctab12[1,2])
+sens12
+
+#specificity = true neg/(true neg + false neg)
+spec12 <- ctab12[1,1]/(ctab12[1,1] + ctab12[2,1])
+spec12
+
+#error = 1 - accuracy
+err12 <- 1-acc12
+err12
+
+#precision = true pos/(true pos + false pos)
+prec12 <- ctab12[2,2]/(ctab12[2,2]+ctab12[2,1])
+prec12
+```
+
+### Top 5
+```{r}
+#get sensitivity/specificity
+pred_5 <- predict(fit_5, x_test5)
+
+CrossTable(pred_5, y_test, prop.chisq = FALSE)
+
+ctab5 <- table(pred_5,y_test)
+
+#accuracy = correct/total
+acc5 <- (ctab5[1,1] + ctab5[2,2])/(ctab5[1,1] + ctab5[1,2] + ctab5[2,1] + ctab5[2,2])
+acc5
+
+#sensitivity = true pos/(true pos + false neg)
+sens5 <- ctab5[2,2]/(ctab5[2,2] + ctab5[1,2])
+sens5
+
+#specificity = true neg/(true neg + false neg)
+spec5 <- ctab5[1,1]/(ctab5[1,1] + ctab5[2,1])
+spec5
+
+#error = 1 - accuracy
+err5 <- 1-acc5
+err5
+
+#precision = true pos/(true pos + false pos)
+prec5 <- ctab5[2,2]/(ctab5[2,2]+ctab5[2,1])
+prec5
+```
+
+
+## Unabalanced Test Set Results
+```{r}
+data.frame(model = c('All','Top 12','Top 5'),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))
+```
