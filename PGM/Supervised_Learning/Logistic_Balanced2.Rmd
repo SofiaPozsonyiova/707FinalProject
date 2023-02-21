@@ -1,0 +1,236 @@
+---
+title: "Logistic Regression with Balanced Data"
+author: "Mairead Dillon"
+date: '2023-02-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include=TRUE)
+
+# Load libraries
+library(tidyverse)
+library(caret)
+library(InformationValue)
+
+# Load data
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/FinalValidation_BalancedUSE.RData")
+
+# Save data under new name
+Train <- Train_Model_Dev_Balanced
+Test <- final_test
+```
+       
+```{r,}
+# Select subsets that are needed 
+Train_All <- Train %>% select(-P28)
+Train_sub12 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+
+Train_sub5 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+Test_All <- Test %>% select(-P28)
+Test_sub12 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_sub5 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+Test_Balanced_All <- Test_Balanced %>% select(-P28)
+Test_Balanced_sub12 <- Test_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_Balanced_sub5 <- Test_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+
+# Make variables numeric
+Train_All <- sapply(Train_All, as.numeric)
+Train_All <- as.data.frame(Train_All)
+
+Train_sub12 <- sapply(Train_sub12, as.numeric)
+Train_sub12 <- as.data.frame(Train_sub12)
+
+Train_sub5 <- sapply(Train_sub5, as.numeric)
+Train_sub5 <- as.data.frame(Train_sub5)
+
+Test_All <- sapply(Test_All, as.numeric)
+Test_All <- as.data.frame(Test_All)
+
+Test_sub12 <- sapply(Test_sub12, as.numeric)
+Test_sub12 <- as.data.frame(Test_sub12)
+
+Test_sub5 <- sapply(Test_sub5, as.numeric)
+Test_sub5 <- as.data.frame(Test_sub5)
+
+Test_Balanced_All <- sapply(Test_Balanced_All, as.numeric)
+Test_Balanced_All <- as.data.frame(Test_Balanced_All)
+
+Test_Balanced_sub12 <- sapply(Test_Balanced_sub12, as.numeric)
+Test_Balanced_sub12 <- as.data.frame(Test_Balanced_sub12)
+
+Test_Balanced_sub5 <- sapply(Test_Balanced_sub5, as.numeric)
+Test_Balanced_sub5 <- as.data.frame(Test_Balanced_sub5)
+```
+       
+# Logistic Regression with All Variables
+```{r}
+# Use cross validation to fit models
+trControl <- trainControl(method = "cv",
+                          number = 5)
+
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_all <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_All)
+
+summary(log_reg_all)
+```
+      
+## Predict and create confusion matrix for logistic regression with all predictors
+```{r}
+# Predict on train data
+predicted_all <- stats::predict(log_reg_all, Train_All)
+predicted_all
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_all, as.factor(Train_All$SelfPerceivedHealth))
+```
+      
+## ROC Curve for logistic regression with all predictors
+```{r}
+# Plot ROC Curve
+plotROC(Train_All$SelfPerceivedHealth, as.numeric(predicted_all))
+```
+       
+# Logistic Regression with Top 12 Predictors
+```{r}
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_12 <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_sub12)
+
+summary(log_reg_12)
+```
+       
+## Predict and create confusion matrix for logistic regression with 12 predictors
+```{r}
+# Predict on train data
+predicted_12 <- stats::predict(log_reg_12, Train_sub12)
+predicted_12
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_12, as.factor(Train_sub12$SelfPerceivedHealth))
+```
+      
+## ROC Curve for logistic regression with 12 predictors
+```{r}
+# Plot ROC Curve
+plotROC(Train_sub12$SelfPerceivedHealth, as.numeric(predicted_12))
+```
+       
+# Logistic Regression with Top 5 Predictors
+```{r}
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_sub5)
+
+summary(log_reg_5)
+```
+       
+## Predict and create confusion matrix for logistic regression with 5 predictors
+```{r}
+# Predict on train data
+predicted_5 <- stats::predict(log_reg_5, Train_sub5)
+predicted_5
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_5, as.factor(Train_sub5$SelfPerceivedHealth))
+```
+      
+## ROC Curve for logistic regression with 12 predictors
+```{r}
+# Plot ROC Curve
+plotROC(Train_sub5$SelfPerceivedHealth, as.numeric(predicted_5))
+```
+       
+# Test logistic regression on balanced test data
+## Test logistic regression with all predictors on balanced data
+```{r}
+# Predict on train data
+predicted_all_balanced_test <- stats::predict(log_reg_all, Test_Balanced_All)
+predicted_all_balanced_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_all_balanced_test, as.factor(Test_Balanced_All$SelfPerceivedHealth))
+```
+
+      
+## Test logistic regression with top 12 predictors on balanced data
+```{r}
+# Predict on train data
+predicted_12_balanced_test <- stats::predict(log_reg_12, Test_Balanced_sub12)
+predicted_12_balanced_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_12_balanced_test, as.factor(Test_Balanced_sub12$SelfPerceivedHealth))
+
+# Calculate precision
+precision(predicted_all_balanced_test, Test_Balanced_All$SelfPerceivedHealth)
+```
+       
+## Test logistic regression with top 5 predictors on balanced data
+```{r}
+# Predict on train data
+predicted_5_balanced_test <- stats::predict(log_reg_5, Test_Balanced_sub5)
+predicted_5_balanced_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_5_balanced_test, as.factor(Test_Balanced_sub5$SelfPerceivedHealth))
+```
+        
+# Test logistic regression on unbalanced test data
+## Test logistic regression with all variables on unbalanced data
+```{r}
+# Predict on train data
+predicted_all_test <- stats::predict(log_reg_all, Test_All)
+predicted_all_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_all_test, as.factor(Test_All$SelfPerceivedHealth))
+```
+      
+## Test logistic regression with top 12 predictors on unbalanced data
+```{r}
+# Predict on train data
+predicted_12_test <- stats::predict(log_reg_12, Test_sub12)
+predicted_12_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_12_test, as.factor(Test_sub12$SelfPerceivedHealth))
+```
+       
+## Test logistic regression with top 5 predictors on unbalanced data
+```{r}
+# Predict on train data
+predicted_5_test <- stats::predict(log_reg_5, Test_sub5)
+predicted_5_test
+
+# Run confusion matrix
+caret::confusionMatrix(predicted_5_test, as.factor(Test_sub5$SelfPerceivedHealth))
+```
+
