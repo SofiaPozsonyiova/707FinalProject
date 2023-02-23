@@ -385,6 +385,7 @@ library(caret)</code></pre>
 <pre class="r"><code># Loading in data from github
 load(&quot;/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData&quot;)
 load(&quot;/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData&quot;)
+load(&quot;/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalValidation_BalancedUSE.RData&quot;)
 
 Train &lt;- Train_Model_Dev_Balanced
 Test &lt;- final_test</code></pre>
@@ -398,6 +399,10 @@ Test_All &lt;- Test %&gt;% select(-P28)
 Test_sub12 &lt;- Test %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
 Test_sub5 &lt;- Test %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
 
+Test_Balanced_All &lt;- Test_Balanced %&gt;% select(-P28)
+Test_Balanced_sub12 &lt;- Test_Balanced %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_Balanced_sub5 &lt;- Test_Balanced %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
 # Split x and y
 x_train &lt;- sapply(Train_All %&gt;% select(-SelfPerceivedHealth),as.numeric)
 x_train12 &lt;- sapply(Train_sub12 %&gt;% select(-SelfPerceivedHealth),as.numeric)
@@ -407,8 +412,13 @@ x_test &lt;- sapply(Test_All %&gt;% select(-SelfPerceivedHealth), as.numeric)
 x_test12 &lt;- sapply(Test_sub12 %&gt;% select(-SelfPerceivedHealth),as.numeric)
 x_test5 &lt;- sapply(Test_sub5 %&gt;% select(-SelfPerceivedHealth),as.numeric)
 
+x_balanced_test &lt;- sapply(Test_Balanced_All %&gt;% select(-SelfPerceivedHealth), as.numeric)
+x_balanced_test12 &lt;- sapply(Test_Balanced_sub12 %&gt;% select(-SelfPerceivedHealth),as.numeric)
+x_balanced_test5 &lt;- sapply(Test_Balanced_sub5 %&gt;% select(-SelfPerceivedHealth),as.numeric)
+
 y_train &lt;- sapply(Train_All %&gt;% select(SelfPerceivedHealth), as.numeric)
-y_test &lt;- sapply(Test %&gt;% select(SelfPerceivedHealth),as.numeric)</code></pre>
+y_test &lt;- sapply(Test %&gt;% select(SelfPerceivedHealth),as.numeric)
+y_balanced_test &lt;- sapply(Test_Balanced %&gt;% select(SelfPerceivedHealth),as.numeric)</code></pre>
 </div>
 <div id="knn" class="section level2">
 <h2>KNN</h2>
@@ -890,6 +900,200 @@ prec5</code></pre>
 ## 1    All 0.8481132   0.7207977   0.8691692 0.4767588
 ## 2 Top 12 0.8146900   0.8081671   0.8157688 0.4204545
 ## 3  Top 5 0.7721024   0.8138651   0.7651955 0.3643707</code></pre>
+</div>
+<div id="test-models-on-balanced-data" class="section level2">
+<h2>Test Models on Balanced Data</h2>
+<div id="all-model-1" class="section level3">
+<h3>All Model</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_all_balanced &lt;- predict(fit_all, x_balanced_test)
+
+CrossTable(pred_all_balanced, y_balanced_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  2106 
+## 
+##  
+##                   | y_balanced_test 
+## pred_all_balanced |         1 |         2 | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##                 1 |       900 |       292 |      1192 | 
+##                   |     0.755 |     0.245 |     0.566 | 
+##                   |     0.855 |     0.277 |           | 
+##                   |     0.427 |     0.139 |           | 
+## ------------------|-----------|-----------|-----------|
+##                 2 |       153 |       761 |       914 | 
+##                   |     0.167 |     0.833 |     0.434 | 
+##                   |     0.145 |     0.723 |           | 
+##                   |     0.073 |     0.361 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |      1053 |      1053 |      2106 | 
+##                   |     0.500 |     0.500 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab &lt;- table(pred_all_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc &lt;- (ctab[1,1] + ctab[2,2])/(ctab[1,1] + ctab[1,2] + ctab[2,1] + ctab[2,2])
+acc</code></pre>
+<pre><code>## [1] 0.788699</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens &lt;- ctab[2,2]/(ctab[2,2] + ctab[1,2])
+sens</code></pre>
+<pre><code>## [1] 0.7226971</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec &lt;- ctab[1,1]/(ctab[1,1] + ctab[2,1])
+spec</code></pre>
+<pre><code>## [1] 0.8547009</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err &lt;- 1-acc
+err</code></pre>
+<pre><code>## [1] 0.211301</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec &lt;- ctab[2,2]/(ctab[2,2]+ctab[2,1])
+prec</code></pre>
+<pre><code>## [1] 0.8326039</code></pre>
+</div>
+<div id="top-12-2" class="section level3">
+<h3>Top 12</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_12_balanced &lt;- predict(fit_12, x_balanced_test12)
+
+CrossTable(pred_12_balanced, y_balanced_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  2106 
+## 
+##  
+##                  | y_balanced_test 
+## pred_12_balanced |         1 |         2 | Row Total | 
+## -----------------|-----------|-----------|-----------|
+##                1 |       848 |       213 |      1061 | 
+##                  |     0.799 |     0.201 |     0.504 | 
+##                  |     0.805 |     0.202 |           | 
+##                  |     0.403 |     0.101 |           | 
+## -----------------|-----------|-----------|-----------|
+##                2 |       205 |       840 |      1045 | 
+##                  |     0.196 |     0.804 |     0.496 | 
+##                  |     0.195 |     0.798 |           | 
+##                  |     0.097 |     0.399 |           | 
+## -----------------|-----------|-----------|-----------|
+##     Column Total |      1053 |      1053 |      2106 | 
+##                  |     0.500 |     0.500 |           | 
+## -----------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab12 &lt;- table(pred_12_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc12 &lt;- (ctab12[1,1] + ctab12[2,2])/(ctab12[1,1] + ctab12[1,2] + ctab12[2,1] + ctab12[2,2])
+acc12</code></pre>
+<pre><code>## [1] 0.8015195</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens12 &lt;- ctab12[2,2]/(ctab12[2,2] + ctab12[1,2])
+sens12</code></pre>
+<pre><code>## [1] 0.7977208</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec12 &lt;- ctab12[1,1]/(ctab12[1,1] + ctab12[2,1])
+spec12</code></pre>
+<pre><code>## [1] 0.8053181</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err12 &lt;- 1-acc12
+err12</code></pre>
+<pre><code>## [1] 0.1984805</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec12 &lt;- ctab12[2,2]/(ctab12[2,2]+ctab12[2,1])
+prec12</code></pre>
+<pre><code>## [1] 0.8038278</code></pre>
+</div>
+<div id="top-5-2" class="section level3">
+<h3>Top 5</h3>
+<pre class="r"><code>#get sensitivity/specificity
+pred_5_balanced &lt;- predict(fit_5, x_balanced_test5)
+
+CrossTable(pred_5_balanced, y_balanced_test, prop.chisq = FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  2106 
+## 
+##  
+##                 | y_balanced_test 
+## pred_5_balanced |         1 |         2 | Row Total | 
+## ----------------|-----------|-----------|-----------|
+##               1 |       807 |       209 |      1016 | 
+##                 |     0.794 |     0.206 |     0.482 | 
+##                 |     0.766 |     0.198 |           | 
+##                 |     0.383 |     0.099 |           | 
+## ----------------|-----------|-----------|-----------|
+##               2 |       246 |       844 |      1090 | 
+##                 |     0.226 |     0.774 |     0.518 | 
+##                 |     0.234 |     0.802 |           | 
+##                 |     0.117 |     0.401 |           | 
+## ----------------|-----------|-----------|-----------|
+##    Column Total |      1053 |      1053 |      2106 | 
+##                 |     0.500 |     0.500 |           | 
+## ----------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>ctab5 &lt;- table(pred_5_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc5 &lt;- (ctab5[1,1] + ctab5[2,2])/(ctab5[1,1] + ctab5[1,2] + ctab5[2,1] + ctab5[2,2])
+acc5</code></pre>
+<pre><code>## [1] 0.7839506</code></pre>
+<pre class="r"><code>#sensitivity = true pos/(true pos + false neg)
+sens5 &lt;- ctab5[2,2]/(ctab5[2,2] + ctab5[1,2])
+sens5</code></pre>
+<pre><code>## [1] 0.8015195</code></pre>
+<pre class="r"><code>#specificity = true neg/(true neg + false neg)
+spec5 &lt;- ctab5[1,1]/(ctab5[1,1] + ctab5[2,1])
+spec5</code></pre>
+<pre><code>## [1] 0.7663818</code></pre>
+<pre class="r"><code>#error = 1 - accuracy
+err5 &lt;- 1-acc5
+err5</code></pre>
+<pre><code>## [1] 0.2160494</code></pre>
+<pre class="r"><code>#precision = true pos/(true pos + false pos)
+prec5 &lt;- ctab5[2,2]/(ctab5[2,2]+ctab5[2,1])
+prec5</code></pre>
+<pre><code>## [1] 0.7743119</code></pre>
+</div>
+</div>
+<div id="balanced-test-set-results" class="section level2">
+<h2>Balanced Test Set Results</h2>
+<pre class="r"><code>data.frame(model = c(&#39;All&#39;,&#39;Top 12&#39;,&#39;Top 5&#39;),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))</code></pre>
+<pre><code>##    model  accuracy sensitivity specificity precision
+## 1    All 0.7886990   0.7226971   0.8547009 0.8326039
+## 2 Top 12 0.8015195   0.7977208   0.8053181 0.8038278
+## 3  Top 5 0.7839506   0.8015195   0.7663818 0.7743119</code></pre>
 </div>
 </div>
 
