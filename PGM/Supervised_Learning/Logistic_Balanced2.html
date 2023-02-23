@@ -363,6 +363,48 @@ display: none;
 </div>
 
 
+<pre class="r"><code># Select subsets that are needed 
+Train_All &lt;- Train %&gt;% select(-P28)
+Train_sub12 &lt;- Train %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+
+Train_sub5 &lt;- Train %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+Test_All &lt;- Test %&gt;% select(-P28)
+Test_sub12 &lt;- Test %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_sub5 &lt;- Test %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+Test_Balanced_All &lt;- Test_Balanced %&gt;% select(-P28)
+Test_Balanced_sub12 &lt;- Test_Balanced %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_Balanced_sub5 &lt;- Test_Balanced %&gt;% select(-P28) %&gt;% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
+
+# Make variables numeric
+Train_All &lt;- sapply(Train_All, as.numeric)
+Train_All &lt;- as.data.frame(Train_All)
+
+Train_sub12 &lt;- sapply(Train_sub12, as.numeric)
+Train_sub12 &lt;- as.data.frame(Train_sub12)
+
+Train_sub5 &lt;- sapply(Train_sub5, as.numeric)
+Train_sub5 &lt;- as.data.frame(Train_sub5)
+
+Test_All &lt;- sapply(Test_All, as.numeric)
+Test_All &lt;- as.data.frame(Test_All)
+
+Test_sub12 &lt;- sapply(Test_sub12, as.numeric)
+Test_sub12 &lt;- as.data.frame(Test_sub12)
+
+Test_sub5 &lt;- sapply(Test_sub5, as.numeric)
+Test_sub5 &lt;- as.data.frame(Test_sub5)
+
+Test_Balanced_All &lt;- sapply(Test_Balanced_All, as.numeric)
+Test_Balanced_All &lt;- as.data.frame(Test_Balanced_All)
+
+Test_Balanced_sub12 &lt;- sapply(Test_Balanced_sub12, as.numeric)
+Test_Balanced_sub12 &lt;- as.data.frame(Test_Balanced_sub12)
+
+Test_Balanced_sub5 &lt;- sapply(Test_Balanced_sub5, as.numeric)
+Test_Balanced_sub5 &lt;- as.data.frame(Test_Balanced_sub5)</code></pre>
 <div id="logistic-regression-with-all-variables" class="section level1">
 <h1>Logistic Regression with All Variables</h1>
 <pre class="r"><code># Use cross validation to fit models
@@ -821,40 +863,135 @@ log_reg_12 &lt;- train(as.factor(SelfPerceivedHealth) ~ .,
                      metric = &quot;Accuracy&quot;,
                      data = Train_sub12)
 
-summary(log_reg_12)</code></pre>
-<pre><code>## 
-## Call:
-## NULL
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -3.12742  -0.61804  -0.02602   0.62254   2.72689  
-## 
-## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)  6.29236    0.24586  25.593  &lt; 2e-16 ***
-## P49f        -0.20649    0.04477  -4.612 3.98e-06 ***
-## P49a        -0.24515    0.04450  -5.509 3.61e-08 ***
-## P50b         0.37161    0.03577  10.390  &lt; 2e-16 ***
-## P49l        -0.22097    0.04434  -4.983 6.26e-07 ***
-## P26a        -0.21911    0.01905 -11.505  &lt; 2e-16 ***
-## P34         -0.72102    0.07027 -10.261  &lt; 2e-16 ***
-## P49h        -0.08323    0.04456  -1.868   0.0618 .  
-## P37         -0.13817    0.01482  -9.321  &lt; 2e-16 ***
-## P47e        -0.11786    0.03016  -3.907 9.33e-05 ***
-## P45         -0.21287    0.02268  -9.386  &lt; 2e-16 ***
-## P49i        -0.35264    0.04219  -8.359  &lt; 2e-16 ***
-## P47b        -0.16559    0.03440  -4.814 1.48e-06 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 12085.7  on 8717  degrees of freedom
-## Residual deviance:  7315.5  on 8705  degrees of freedom
-## AIC: 7341.5
-## 
-## Number of Fisher Scoring iterations: 5</code></pre>
+summary(log_reg_12) %&gt;% pander()</code></pre>
+<table style="width:90%;">
+<colgroup>
+<col width="25%" />
+<col width="15%" />
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">z value</th>
+<th align="center">Pr(&gt;|z|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">6.292</td>
+<td align="center">0.2459</td>
+<td align="center">25.59</td>
+<td align="center">1.837e-144</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P49f</strong></td>
+<td align="center">-0.2065</td>
+<td align="center">0.04477</td>
+<td align="center">-4.612</td>
+<td align="center">3.983e-06</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P49a</strong></td>
+<td align="center">-0.2452</td>
+<td align="center">0.0445</td>
+<td align="center">-5.509</td>
+<td align="center">3.611e-08</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P50b</strong></td>
+<td align="center">0.3716</td>
+<td align="center">0.03577</td>
+<td align="center">10.39</td>
+<td align="center">2.751e-25</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P49l</strong></td>
+<td align="center">-0.221</td>
+<td align="center">0.04434</td>
+<td align="center">-4.983</td>
+<td align="center">6.26e-07</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P26a</strong></td>
+<td align="center">-0.2191</td>
+<td align="center">0.01905</td>
+<td align="center">-11.5</td>
+<td align="center">1.252e-30</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P34</strong></td>
+<td align="center">-0.721</td>
+<td align="center">0.07027</td>
+<td align="center">-10.26</td>
+<td align="center">1.058e-24</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P49h</strong></td>
+<td align="center">-0.08323</td>
+<td align="center">0.04456</td>
+<td align="center">-1.868</td>
+<td align="center">0.06181</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P37</strong></td>
+<td align="center">-0.1382</td>
+<td align="center">0.01482</td>
+<td align="center">-9.321</td>
+<td align="center">1.155e-20</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P47e</strong></td>
+<td align="center">-0.1179</td>
+<td align="center">0.03016</td>
+<td align="center">-3.907</td>
+<td align="center">9.326e-05</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P45</strong></td>
+<td align="center">-0.2129</td>
+<td align="center">0.02268</td>
+<td align="center">-9.386</td>
+<td align="center">6.231e-21</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P49i</strong></td>
+<td align="center">-0.3526</td>
+<td align="center">0.04219</td>
+<td align="center">-8.359</td>
+<td align="center">6.303e-17</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P47b</strong></td>
+<td align="center">-0.1656</td>
+<td align="center">0.0344</td>
+<td align="center">-4.814</td>
+<td align="center">1.48e-06</td>
+</tr>
+</tbody>
+</table>
+<p>(Dispersion parameter for binomial family taken to be 1 )</p>
+<table style="width:69%;">
+<colgroup>
+<col width="29%" />
+<col width="40%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="center">Null deviance:</td>
+<td align="center">12086 on 8717 degrees of freedom</td>
+</tr>
+<tr class="even">
+<td align="center">Residual deviance:</td>
+<td align="center">7315 on 8705 degrees of freedom</td>
+</tr>
+</tbody>
+</table>
 <div id="predict-and-create-confusion-matrix-for-logistic-regression-with-12-predictors" class="section level2">
 <h2>Predict and create confusion matrix for logistic regression with 12
 predictors</h2>
@@ -1148,33 +1285,86 @@ log_reg_5 &lt;- train(as.factor(SelfPerceivedHealth) ~ .,
                      metric = &quot;Accuracy&quot;,
                      data = Train_sub5)
 
-summary(log_reg_5)</code></pre>
-<pre><code>## 
-## Call:
-## NULL
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -2.8790  -0.6748  -0.0533   0.6894   2.5382  
-## 
-## Coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)  3.32335    0.15866  20.946   &lt;2e-16 ***
-## P49f        -0.44975    0.04100 -10.968   &lt;2e-16 ***
-## P49a        -0.39125    0.04186  -9.346   &lt;2e-16 ***
-## P50b         0.58927    0.03070  19.192   &lt;2e-16 ***
-## P37         -0.22114    0.01299 -17.018   &lt;2e-16 ***
-## P49l        -0.49000    0.03868 -12.668   &lt;2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 12085.7  on 8717  degrees of freedom
-## Residual deviance:  7900.1  on 8712  degrees of freedom
-## AIC: 7912.1
-## 
-## Number of Fisher Scoring iterations: 5</code></pre>
+summary(log_reg_5) %&gt;% pander()</code></pre>
+<table style="width:89%;">
+<colgroup>
+<col width="25%" />
+<col width="15%" />
+<col width="18%" />
+<col width="13%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">z value</th>
+<th align="center">Pr(&gt;|z|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">3.323</td>
+<td align="center">0.1587</td>
+<td align="center">20.95</td>
+<td align="center">2.034e-97</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P49f</strong></td>
+<td align="center">-0.4497</td>
+<td align="center">0.041</td>
+<td align="center">-10.97</td>
+<td align="center">5.443e-28</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P49a</strong></td>
+<td align="center">-0.3913</td>
+<td align="center">0.04186</td>
+<td align="center">-9.346</td>
+<td align="center">9.063e-21</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P50b</strong></td>
+<td align="center">0.5893</td>
+<td align="center">0.0307</td>
+<td align="center">19.19</td>
+<td align="center">4.283e-82</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>P37</strong></td>
+<td align="center">-0.2211</td>
+<td align="center">0.01299</td>
+<td align="center">-17.02</td>
+<td align="center">6.042e-65</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>P49l</strong></td>
+<td align="center">-0.49</td>
+<td align="center">0.03868</td>
+<td align="center">-12.67</td>
+<td align="center">8.845e-37</td>
+</tr>
+</tbody>
+</table>
+<p>(Dispersion parameter for binomial family taken to be 1 )</p>
+<table style="width:69%;">
+<colgroup>
+<col width="29%" />
+<col width="40%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="center">Null deviance:</td>
+<td align="center">12086 on 8717 degrees of freedom</td>
+</tr>
+<tr class="even">
+<td align="center">Residual deviance:</td>
+<td align="center">7900 on 8712 degrees of freedom</td>
+</tr>
+</tbody>
+</table>
 <div id="predict-and-create-confusion-matrix-for-logistic-regression-with-5-predictors" class="section level2">
 <h2>Predict and create confusion matrix for logistic regression with 5
 predictors</h2>
@@ -1643,6 +1833,9 @@ caret::confusionMatrix(predicted_12_balanced_test, as.factor(Test_Balanced_sub12
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
+<pre class="r"><code># Calculate precision
+precision(predicted_all_balanced_test, Test_Balanced_All$SelfPerceivedHealth)</code></pre>
+<pre><code>## [1] 0.4900285</code></pre>
 </div>
 <div id="test-logistic-regression-with-top-5-predictors-on-balanced-data" class="section level2">
 <h2>Test logistic regression with top 5 predictors on balanced data</h2>

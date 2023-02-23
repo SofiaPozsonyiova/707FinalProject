@@ -12,6 +12,7 @@ knitr::opts_chunk$set(include=TRUE)
 library(tidyverse)
 library(caret)
 library(InformationValue)
+library(pander)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
@@ -117,7 +118,7 @@ log_reg_12 <- train(as.factor(SelfPerceivedHealth) ~ .,
                      metric = "Accuracy",
                      data = Train_sub12)
 
-summary(log_reg_12)
+summary(log_reg_12) %>% pander()
 ```
        
 ## Predict and create confusion matrix for logistic regression with 12 predictors
@@ -149,7 +150,7 @@ log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ .,
                      metric = "Accuracy",
                      data = Train_sub5)
 
-summary(log_reg_5)
+summary(log_reg_5) %>% pander()
 ```
        
 ## Predict and create confusion matrix for logistic regression with 5 predictors
