@@ -13,6 +13,7 @@ library(tidyverse)
 library(caret)
 library(InformationValue)
 library(pander)
+library(lmtest)
 
 # Load data
 load("/Users/maireaddillon/Documents/Duke/BIOS-707/Project/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
@@ -151,6 +152,19 @@ log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ .,
                      data = Train_sub5)
 
 summary(log_reg_5) %>% pander()
+
+# Get odds ratios
+exp(summary(log_reg_5)$coefficients[2]) # P49f
+exp(summary(log_reg_5)$coefficients[3]) # P49a
+exp(summary(log_reg_5)$coefficients[4]) # P50b
+exp(summary(log_reg_5)$coefficients[6]) # P49l
+exp(summary(log_reg_5)$coefficients[5]) # P37
+
+# Get odds ratios for all coefficients
+exp(coef(log_reg_5$finalModel))
+
+# Get confidence intervals
+exp(confint(log_reg_5$finalModel))
 ```
        
 ## Predict and create confusion matrix for logistic regression with 5 predictors
@@ -233,5 +247,17 @@ predicted_5_test
 
 # Run confusion matrix
 caret::confusionMatrix(predicted_5_test, as.factor(Test_sub5$SelfPerceivedHealth))
+```
+      
+## Likelihood ratio tests for unbalanced model
+```{r}
+# 126 predictors vs. 12 predictors
+lrtest(log_reg_all$finalModel, log_reg_12$finalModel)
+
+# 12 predictors vs. 5 predictors
+lrtest(log_reg_12$finalModel, log_reg_5$finalModel)
+
+# 126 predictors vs. 5 predictors
+lrtest(log_reg_all$finalModel, log_reg_5$finalModel)
 ```
 
