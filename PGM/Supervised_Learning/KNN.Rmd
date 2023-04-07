@@ -42,6 +42,7 @@ library(caret)
 # Loading in data from github
 load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
 load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+load("/Users/sdm98/Documents/GitHub/Private707/data/Balanced/FinalValidation_BalancedUSE.RData")
 
 Train <- Train_Model_Dev_Balanced
 Test <- final_test
@@ -58,6 +59,10 @@ Test_All <- Test %>% select(-P28)
 Test_sub12 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
 Test_sub5 <- Test %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
 
+Test_Balanced_All <- Test_Balanced %>% select(-P28)
+Test_Balanced_sub12 <- Test_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P26a,P34,P49h,P37,P47e,P45,P49i,P47b,SelfPerceivedHealth))
+Test_Balanced_sub5 <- Test_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+
 # Split x and y
 x_train <- sapply(Train_All %>% select(-SelfPerceivedHealth),as.numeric)
 x_train12 <- sapply(Train_sub12 %>% select(-SelfPerceivedHealth),as.numeric)
@@ -67,8 +72,14 @@ x_test <- sapply(Test_All %>% select(-SelfPerceivedHealth), as.numeric)
 x_test12 <- sapply(Test_sub12 %>% select(-SelfPerceivedHealth),as.numeric)
 x_test5 <- sapply(Test_sub5 %>% select(-SelfPerceivedHealth),as.numeric)
 
+x_balanced_test <- sapply(Test_Balanced_All %>% select(-SelfPerceivedHealth), as.numeric)
+x_balanced_test12 <- sapply(Test_Balanced_sub12 %>% select(-SelfPerceivedHealth),as.numeric)
+x_balanced_test5 <- sapply(Test_Balanced_sub5 %>% select(-SelfPerceivedHealth),as.numeric)
+
 y_train <- sapply(Train_All %>% select(SelfPerceivedHealth), as.numeric)
 y_test <- sapply(Test %>% select(SelfPerceivedHealth),as.numeric)
+y_balanced_test <- sapply(Test_Balanced %>% select(SelfPerceivedHealth),as.numeric)
+
 ```
 
 
@@ -310,6 +321,105 @@ prec5
 
 
 ## Unabalanced Test Set Results
+```{r}
+data.frame(model = c('All','Top 12','Top 5'),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))
+```
+
+
+## Test Models on Balanced Data
+
+### All Model
+```{r}
+#get sensitivity/specificity
+pred_all_balanced <- predict(fit_all, x_balanced_test)
+
+CrossTable(pred_all_balanced, y_balanced_test, prop.chisq = FALSE)
+
+ctab <- table(pred_all_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc <- (ctab[1,1] + ctab[2,2])/(ctab[1,1] + ctab[1,2] + ctab[2,1] + ctab[2,2])
+acc
+
+#sensitivity = true pos/(true pos + false neg)
+sens <- ctab[2,2]/(ctab[2,2] + ctab[1,2])
+sens
+
+#specificity = true neg/(true neg + false neg)
+spec <- ctab[1,1]/(ctab[1,1] + ctab[2,1])
+spec
+
+#error = 1 - accuracy
+err <- 1-acc
+err
+
+#precision = true pos/(true pos + false pos)
+prec <- ctab[2,2]/(ctab[2,2]+ctab[2,1])
+prec
+```
+
+### Top 12
+```{r}
+#get sensitivity/specificity
+pred_12_balanced <- predict(fit_12, x_balanced_test12)
+
+CrossTable(pred_12_balanced, y_balanced_test, prop.chisq = FALSE)
+
+ctab12 <- table(pred_12_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc12 <- (ctab12[1,1] + ctab12[2,2])/(ctab12[1,1] + ctab12[1,2] + ctab12[2,1] + ctab12[2,2])
+acc12
+
+#sensitivity = true pos/(true pos + false neg)
+sens12 <- ctab12[2,2]/(ctab12[2,2] + ctab12[1,2])
+sens12
+
+#specificity = true neg/(true neg + false neg)
+spec12 <- ctab12[1,1]/(ctab12[1,1] + ctab12[2,1])
+spec12
+
+#error = 1 - accuracy
+err12 <- 1-acc12
+err12
+
+#precision = true pos/(true pos + false pos)
+prec12 <- ctab12[2,2]/(ctab12[2,2]+ctab12[2,1])
+prec12
+```
+
+### Top 5
+```{r}
+#get sensitivity/specificity
+pred_5_balanced <- predict(fit_5, x_balanced_test5)
+
+CrossTable(pred_5_balanced, y_balanced_test, prop.chisq = FALSE)
+
+ctab5 <- table(pred_5_balanced,y_balanced_test)
+
+#accuracy = correct/total
+acc5 <- (ctab5[1,1] + ctab5[2,2])/(ctab5[1,1] + ctab5[1,2] + ctab5[2,1] + ctab5[2,2])
+acc5
+
+#sensitivity = true pos/(true pos + false neg)
+sens5 <- ctab5[2,2]/(ctab5[2,2] + ctab5[1,2])
+sens5
+
+#specificity = true neg/(true neg + false neg)
+spec5 <- ctab5[1,1]/(ctab5[1,1] + ctab5[2,1])
+spec5
+
+#error = 1 - accuracy
+err5 <- 1-acc5
+err5
+
+#precision = true pos/(true pos + false pos)
+prec5 <- ctab5[2,2]/(ctab5[2,2]+ctab5[2,1])
+prec5
+```
+
+
+## Balanced Test Set Results
 ```{r}
 data.frame(model = c('All','Top 12','Top 5'),accuracy = c(acc, acc12, acc5), sensitivity = c(sens, sens12, sens5), specificity = c(spec, spec12, spec5), precision = c(prec, prec12, prec5))
 ```
