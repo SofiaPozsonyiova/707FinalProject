@@ -71,8 +71,7 @@ forest_modelAll <- train(
   tuneGrid = data.frame(mtry = c(2,12,63,126)),
   trControl = trainControl(method = "cv",number = 5),
   metric = "Accuracy",
-  na.action = na.omit,
-  seed = 2023)
+  na.action = na.omit)
 ```
 
 ```{r}
@@ -83,7 +82,7 @@ forest_modelAll$results
 
 ```{r}
 #Visualizing results 
-plot(forest_modelAll)
+# plot(forest_modelAll)
 ```
 
 ```{r}
@@ -96,12 +95,28 @@ forest_modelAll$finalModel
 var_impAll <- varImp(forest_modelAll, scale=FALSE)$importance
 var_impAll <- data.frame(variables=row.names(var_impAll), importance=var_impAll$Overall)
 var_impAll %>% arrange(desc(importance))
+
+## Select top 25 variables
+var_impTop <- var_impAll %>% arrange(desc(importance)) %>% slice_head(n = 25)
+
+## Create a plot of variable importance for the top 25 variables
+var_impPlot <- var_impTop %>% 
+  arrange(importance) %>%
+  ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+  geom_bar(stat='identity', fill = "cornflowerblue") + 
+  coord_flip() + 
+  xlab('Variables') +
+  labs(title='Random Forest Variable Importance (Top 25 predictors)') + ylab("Gini Impurity") + 
+  theme(axis.text = element_text(size = 12), 
+        axis.title = element_text(size = 14))
+
+var_impPlot
 ```
 
 
 ```{r fig.height=12}
 ## Create a plot of variable importance
-var_impAll <- var_impAll %>%
+var_impAll <- var_impAll  %>% 
   arrange(importance) %>%
   ggplot(aes(x=reorder(variables, importance), y=importance)) + 
   geom_bar(stat='identity', fill = "cornflowerblue") + 
@@ -110,6 +125,7 @@ var_impAll <- var_impAll %>%
   labs(title='Random Forest Variable Importance (All predictors)') + ylab("Gini Impurity") + 
   theme(axis.text = element_text(size = 12), 
         axis.title = element_text(size = 14))
+
 #ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
 
 var_impAll
@@ -157,22 +173,22 @@ confusionMatrix(table(final_test$SelfPerceivedHealth, y_hatsAll_val))
 
 ### Balanced Validation Set: All Variables Included  
 ```{r}
-## Generate predictions
-y_hatsAll_val <- predict(
-  object=forest_modelAll, 
-  newdata= Test_Balanced %>% select(-SelfPerceivedHealth,-P28))
-
-## Print the accuracy
-accuracy <- mean(y_hatsAll_val == Test_Balanced$SelfPerceivedHealth)*100
-cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+# ## Generate predictions
+# y_hatsAll_val <- predict(
+#   object=forest_modelAll, 
+#   newdata= Test_Balanced %>% select(-SelfPerceivedHealth,-P28))
+# 
+# ## Print the accuracy
+# accuracy <- mean(y_hatsAll_val == Test_Balanced$SelfPerceivedHealth)*100
+# cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 ```
 
 ```{r}
-# Confusion matrix 
-conf_all_final <- table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val)
-conf_all_final
-
-confusionMatrix(table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val))
+# # Confusion matrix 
+# conf_all_final <- table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val)
+# conf_all_final
+# 
+# confusionMatrix(table(Test_Balanced$SelfPerceivedHealth, y_hatsAll_val))
 ```
 
 # Top 12 Variables: CV

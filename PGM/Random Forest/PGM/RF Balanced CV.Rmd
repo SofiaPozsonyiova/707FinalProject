@@ -68,7 +68,7 @@ forest_modelAll <- train(
   SelfPerceivedHealth ~ ., 
   data = Train_All,
   method = "rf",
-  tuneGrid = data.frame(mtry = c(2,12,63,126)),
+  tuneGrid = data.frame(mtry = c(2,12)),
   trControl = trainControl(method = "cv",number = 5),
   metric = "Accuracy",
   na.action = na.omit,
@@ -102,15 +102,19 @@ var_impAll %>% arrange(desc(importance))
 ```{r fig.height=12}
 ## Create a plot of variable importance
 var_impAll <- var_impAll %>%
-  arrange(importance) %>%
   ggplot(aes(x=reorder(variables, importance), y=importance)) + 
   geom_bar(stat='identity', fill = "cornflowerblue") + 
   coord_flip() + 
   xlab('Variables') +
   labs(title='Random Forest Variable Importance (All predictors)') + ylab("Gini Impurity") + 
   theme(axis.text = element_text(size = 12), 
-        axis.title = element_text(size = 14))
-#ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
+        axis.title = element_text(size = 14),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/var_impAll.png")
 
 var_impAll
 ```
@@ -231,6 +235,7 @@ var_imp12 <- var_imp12 %>%
   theme(axis.text = element_text(size = 12), 
         axis.title = element_text(size = 14))
 #ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/var_imp12.png")
 
 var_imp12
 ```

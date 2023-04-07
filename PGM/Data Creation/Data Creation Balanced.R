@@ -32,16 +32,26 @@ dat_sub_named[,col_names] <- lapply(dat_sub_named[,col_names] , factor)
 
 #----------------------- Exploratory Analysis -----------------------
 
+data_sub_na <- dat_sub %>% select(c(P7,P20d,P20e,P54c,P55,P67,P69a,P69b,P69c,P94,P95,P97a,
+                                     P97b,
+                                     P98,
+                                     P99a,
+                                     P99b,
+                                     P99c,
+                                     P99d,
+                                     P99e,
+                                     P99f,
+                                     P99g))
 # Visualizing Missing 
-# plot_missing(dat_sub_named)
+plot_missing(data_sub_na)
 
 # Visualizing Each Distribution
 # plot_bar(dat_sub_named)
 
 # Visualizing Outcome 
-ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
-  geom_bar(fill = "cornflowerblue") +
-  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c('Excellent', 'Very good', 'Good', 'Fair','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
+# ggplot(data=dat_sub_named, aes(x=SelfPerceivedHealth)) +
+#   geom_bar(fill = "cornflowerblue") +
+#   geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c('Excellent', 'Very good', 'Good', 'Fair','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
 # ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/selfperceivedhealth.png")
 
 #----------------------- Removing Missing  -----------------------
@@ -93,6 +103,40 @@ na_removed_dat %>%
   summarise(cnt = n()) %>%
   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
   arrange(desc(freq))
+
+na_removed_dat <- na_removed_dat[!is.na(na_removed_dat$SelfPerceivedHealth), ]
+table(na_removed_dat$SelfPerceivedHealth,na_removed_dat$Biosex)
+
+ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
+  geom_bar(fill = "cornflowerblue") +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c('Good','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/selfperceivedhealthDic.png", height = 6.5, width = 4)
+
+
+ggplot(data=na_removed_dat, aes(x=factor(Biosex, labels = c("Male", "Female")), fill = factor(SelfPerceivedHealth, labels = c("Good", "Poor")))) +
+  geom_bar() +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1) +
+  scale_x_discrete(labels=c('Male','Female')) +
+  xlab("Biological Sex") +
+  ylab("Count") +
+  ggtitle("Self-Perceived Health by Bio Sex") +
+  facet_wrap(~factor(SelfPerceivedHealth, labels = c("Good", "Poor"))) +
+  guides(fill = "none")
+
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/SexBio.png", height = 6, width = 5)
+
+
+ggplot(data=na_removed_dat, aes(x=P1, fill = SelfPerceivedHealth)) +
+  geom_bar() +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1) +
+  scale_x_discrete(labels=c('8','9','11')) +
+  xlab("Grade") +
+  ylab("Count") +
+  ggtitle("Self-Perceived Health by Grade")  +
+  guides(fill = "none")+facet_wrap(~factor(SelfPerceivedHealth, labels = c("Good", "Poor")))
+
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/Grade.png", height = 6.2, width = 5.5)
+
 
 # QC:
 # na_removed_dat %>%

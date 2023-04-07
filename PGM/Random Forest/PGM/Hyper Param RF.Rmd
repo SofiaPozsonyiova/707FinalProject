@@ -1,0 +1,149 @@
+---
+title: "RF_BalancedTrain_CV"
+author: "Sofia Pozsonyiova"
+date: "2/16/2023"
+output: html_document
+---
+
+```{css, echo=FALSE}
+pre {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 100px;
+}
+```
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+
+```{r message=FALSE, warning=FALSE}
+set.seed(707)
+# Libraries
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(caret)
+library(rpart)         
+library(rpart.plot)    
+library(class)         
+library(randomForest)  
+library(infer)
+```
+
+# Data 
+
+```{r}
+# Loading in data from github
+# Training 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+
+# Testing 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+```
+
+
+# All Variables: CV 
+
+## Data 
+
+```{r}
+# Selecting clusters that are needed 
+Train_All <- Train_Model_Dev_Balanced %>% select(-P28)
+```
+
+```{r cache = TRUE}
+# Ran the function with a max node sequence of 5,10,15 and then ntrees 500,600,700,800,900,1000 along with 4 different mtry splits 
+
+set.seed(2023)
+library(randomForest)
+
+Train_All <- Train_Model_Dev_Balanced %>% select(-P28)
+
+# Set up tuning grid
+mtry_seq <- c(2, 12, 63, 126)
+ntree_seq <- seq(from = 500, to = 1000, by = 100)
+maxnodes_seq <- c(5,10,15)
+
+tuneGrid <- expand.grid(mtry = mtry_seq, ntree = ntree_seq, maxnodes = maxnodes_seq)
+
+# Train models
+models <- list()
+for(i in 1:nrow(tuneGrid)) {
+  print(paste0("Training model ", i))
+  models[[i]] <- randomForest(
+    SelfPerceivedHealth ~ ., 
+    data = Train_All,
+    mtry = tuneGrid$mtry[i],
+    ntree = tuneGrid$ntree[i],
+    maxnodes = tuneGrid$maxnodes[i],
+    na.action = na.omit
+  )
+}
+
+# Evaluate models
+oob_acc <- sapply(models, function(m) m$err.rate[nrow(m$err.rate), "OOB"])
+best_model_idx <- which.max(oob_acc)
+best_model <- models[[best_model_idx]]
+best_params <- tuneGrid[best_model_idx, ]
+
+# Print results
+cat(paste0("Best model: OOB accuracy = ", round(oob_acc[best_model_idx], 3), "\n"))
+cat(paste0("mtry = ", best_params$mtry, ", ntree = ", best_params$ntree, ", maxnodes = ", best_params$maxnodes, "\n"))
+
+
+
+```
+
+### Training: All Variables Included  
+```{r}
+library(randomForest)
+
+set.seed(2023)
+# Fit the random forest model
+forest_model <- randomForest(
+  SelfPerceivedHealth ~ ., 
+  data = Train_All,
+  mtry = 12,
+  maxdepth = 5,
+  ntree = 500,
+  na.action = na.omit
+)
+
+# Visualize
+plot(forest_model)
+
+# Final model Forest 
+forest_model$
+
+t <- as.data.frame(forest_model$importance)
+t <- t %>% arrange(desc(MeanDecreaseGini))
+
+y_hatsAll_val <- predict(
+  object=forest_model, 
+  newdata= final_test %>% select(-SelfPerceivedHealth))
+
+## Print the accuracy
+accuracy <- mean(y_hatsAll_val == final_test$SelfPerceivedHealth)*100
+cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
+
+# Confusion matrix 
+conf_all_final <- table(final_test$SelfPerceivedHealth, y_hatsAll_val)
+conf_all_final
+
+confusionMatrix(table(final_test$SelfPerceivedHealth, y_hatsAll_val))
+```
+
+
+
+
+
+
