@@ -158,7 +158,7 @@ confusionMatrix(table(Train_All$SelfPerceivedHealth, y_hatsAll_val))
 ## Generate predictions
 y_hatsAll_val <- predict(
   object=forest_modelAll, 
-  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+  newdata= final_test %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
 accuracy <- mean(y_hatsAll_val == final_test$SelfPerceivedHealth)*100
@@ -273,7 +273,7 @@ confusionMatrix(table(Train_sub12$SelfPerceivedHealth, y_hats12))
 ## Generate predictions
 y_hats12 <- predict(
   object=forest_model_12, 
-  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+  newdata= final_test %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
 accuracy <- mean(y_hats12 == final_test$SelfPerceivedHealth)*100
@@ -307,7 +307,7 @@ Train_sub5 <- Train_All  %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceiv
 # Initializing Random Forest
 forest_model_5 <- train(
   SelfPerceivedHealth ~ ., 
-  data = Train_sub4,
+  data = Train_sub5,
   method = "rf",
   tuneGrid = data.frame(mtry = c(1,2,4,5)),
   trControl = trainControl(method = "cv",number = 5),
@@ -359,19 +359,19 @@ var_imp5
 ## Generate predictions
 y_hats5 <- predict(
   object=forest_model_5, 
-  newdata= Train_sub4 %>% select(-SelfPerceivedHealth))
+  newdata= Train_sub5 %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
-accuracy <- mean(y_hats5 == Train_sub4$SelfPerceivedHealth)*100
+accuracy <- mean(y_hats5 == Train_sub5$SelfPerceivedHealth)*100
 cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 ```
 
 ```{r}
 # Confusion matrix 
-conf_5 <- table(Train_sub4$SelfPerceivedHealth, y_hats5)
+conf_5 <- table(Train_sub5$SelfPerceivedHealth, y_hats5)
 conf_5
 
-confusionMatrix(table(Train_sub4$SelfPerceivedHealth, y_hats5))
+confusionMatrix(table(Train_sub5$SelfPerceivedHealth, y_hats5))
 ```
 
 
@@ -383,7 +383,7 @@ confusionMatrix(table(Train_sub4$SelfPerceivedHealth, y_hats5))
 ## Generate predictions
 y_hats5 <- predict(
   object=forest_model_5, 
-  newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
+  newdata= final_test %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
 accuracy <- mean(y_hats5 == final_test$SelfPerceivedHealth)*100
