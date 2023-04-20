@@ -37,6 +37,7 @@ library(rpart.plot)
 library(class)         
 library(randomForest)  
 library(infer)
+library(pander)
 ```
 
 # Data 
@@ -64,68 +65,21 @@ fac_col_names <- names(factor_vars)
 
 Train_All[,fac_col_names] <- lapply(Train_All[,fac_col_names] , as.numeric)
 Train_All <- Train_All %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth))
+
+
+
+
+factor_varsTEST <- final_test %>% dplyr::select(c(-SelfPerceivedHealth))
+fac_col_namesTEST  <- names(factor_varsTEST)
+
+final_test[,fac_col_namesTEST] <- lapply(final_test[,fac_col_namesTEST] , as.numeric)
+final_test <- final_test %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth))
 ```
 
 ### Training: All Variables Included  
-```{r}
-repeat_cv <- trainControl(method='cv', number=5)
+```{r cache=TRUE}
 ## Set seed for reproducibility
 set.seed(2023)
-
-## Train a random forest model
-forest <- train(
-        
-        # Formula. We are using all variables to predict Species
-        SelfPerceivedHealth~., 
-        
-        # Source of data; remove the Species variable
-        data=Train_All, 
-        
-        # `rf` method for random forest
-        method='rf', 
-        
-        # Add repeated cross validation as trControl
-        trControl=repeat_cv,
-        tuneGrid = data.frame(mtry = c(12)),
-        # Accuracy to measure the performance of the model
-        metric='Accuracy')
-
-## Print out the details about the model
-forest_model <- forest
-
-# Get variable importance as a data frame
-var_imp <- data.frame(importance(forest_model, type = 1))
-
-# Add variable names as a new column
-var_imp$variable <- rownames(var_imp)
-
-# Order variable importance by decreasing order
-var_imp <- var_imp[order(var_imp$MeanDecreaseGini, decreasing = TRUE), ]
-
-# Map variable indices to their names
-var_imp$variable <- names(Train_All)[-1][as.numeric(var_imp$variable)]
-
-# Print variable importance
-print(var_imp)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Initializing Random Forest
 forest_modelAll <- train(
@@ -146,8 +100,8 @@ forest_modelAll$results
 ```
 
 ```{r}
-#Visualizing results 
-plot(forest_modelAll)
+# #Visualizing results 
+# plot(forest_modelAll)
 ```
 
 ```{r}
@@ -221,9 +175,23 @@ confusionMatrix(table(final_test$SelfPerceivedHealth, y_hatsAll_val))
 
 
 # Top 12 Variables: CV
+
+P50b	348.0440210			
+P49a	250.7617614			
+P49f	247.8041733			
+P49l	189.0953441			
+P49h	157.6218958			
+Suicide	148.6688634			
+P37	130.4934373			
+P50c	124.8739970			
+P34	114.7006453			
+P26a	112.1956793	
+P50d	110.4604551			
+P49e	100.5335619	
+
 ## Data 
 ```{r}
-Train_sub12 <- Train_Model_Dev_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P49l,P47e,P49h,P34,P26a,P37,P49i,P49p,P49e,SelfPerceivedHealth))
+Train_sub12 <- Train_All  %>% dplyr::select(c(SelfPerceivedHealth,P50b,P49a,P49f,P49l,P49h,Suicide,P37,P50c,P34,P26a,P50d,P49e))
 ```
 
 ### Training: All Variables Included  
@@ -320,26 +288,28 @@ conf_12
 confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats12))
 ```
 
-P49f	768.8373			
-P49a	460.8534			
-P37	439.7683			
-P50b	423.4315			
-P49l	399.1797			
+		
 
 # Top 5 Variables: CV
+
+P50b	754.4766			
+P49f	569.5484			
+P49a	568.8003			
+P37	499.5082			
+P49l	448.0862	
 ## Data 
 ```{r}
-Train_sub4 <- Train_Model_Dev_Balanced %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
+Train_sub5 <- Train_All  %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
 ```
 
 ### Training: All Variables Included  
 ```{r cache = TRUE}
 # Initializing Random Forest
-forest_model_4 <- train(
+forest_model_5 <- train(
   SelfPerceivedHealth ~ ., 
   data = Train_sub4,
   method = "rf",
-  tuneGrid = data.frame(mtry = c(1,2,4)),
+  tuneGrid = data.frame(mtry = c(1,2,4,5)),
   trControl = trainControl(method = "cv",number = 5),
   metric = "Accuracy",
   na.action = na.omit,
@@ -348,30 +318,30 @@ forest_model_4 <- train(
 
 ```{r}
 # Printing results
-print(forest_model_4)
-forest_model_4$results
+print(forest_model_5)
+forest_model_5$results
 ```
 
 ```{r}
 #Visualizing results 
-plot(forest_model_4)
+plot(forest_model_5)
 ```
 
 ```{r}
 # Final model Forest 
-forest_model_4$finalModel
+forest_model_5$finalModel
 ```
 
 ```{r}
 ## Get variable importance, and turn into a data frame
-var_imp4 <- varImp(forest_model_4, scale=FALSE)$importance
-var_imp4 <- data.frame(variables=row.names(var_imp4), importance=var_imp4$Overall)
-var_imp4 %>% arrange(desc(importance))
+var_imp5 <- varImp(forest_model_5, scale=FALSE)$importance
+var_imp5 <- data.frame(variables=row.names(var_imp5), importance=var_imp5$Overall)
+var_imp5 %>% arrange(desc(importance))
 ```
 
 ```{r fig.height=12}
 ## Create a plot of variable importance
-var_imp4 <- var_imp4 %>%
+var_imp5 <- var_imp5 %>%
   arrange(importance) %>%
   ggplot(aes(x=reorder(variables, importance), y=importance)) + 
   geom_bar(stat='identity', fill = "cornflowerblue") + 
@@ -382,50 +352,142 @@ var_imp4 <- var_imp4 %>%
         axis.title = element_text(size = 14))
 #ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/PGM/Model\ Building/var_impAll.png")
 
-var_imp4
+var_imp5
 ```
 
 ```{r}
 ## Generate predictions
-y_hats4 <- predict(
-  object=forest_model_4, 
+y_hats5 <- predict(
+  object=forest_model_5, 
   newdata= Train_sub4 %>% select(-SelfPerceivedHealth))
 
 ## Print the accuracy
-accuracy <- mean(y_hats4 == Train_sub4$SelfPerceivedHealth)*100
+accuracy <- mean(y_hats5 == Train_sub4$SelfPerceivedHealth)*100
 cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 ```
 
 ```{r}
 # Confusion matrix 
-conf_4 <- table(Train_sub4$SelfPerceivedHealth, y_hats4)
-conf_4
+conf_5 <- table(Train_sub4$SelfPerceivedHealth, y_hats5)
+conf_5
 
-confusionMatrix(table(Train_sub4$SelfPerceivedHealth, y_hats4))
+confusionMatrix(table(Train_sub4$SelfPerceivedHealth, y_hats5))
 ```
 
 
 
 
-### Validation Set: Top 4
+### Validation Set: Top 5
 
 ```{r}
 ## Generate predictions
-y_hats4 <- predict(
-  object=forest_model_4, 
+y_hats5 <- predict(
+  object=forest_model_5, 
   newdata= final_test %>% select(-SelfPerceivedHealth,-P28))
 
 ## Print the accuracy
-accuracy <- mean(y_hats4 == final_test$SelfPerceivedHealth)*100
+accuracy <- mean(y_hats5 == final_test$SelfPerceivedHealth)*100
 cat('Accuracy on testing data: ', round(accuracy, 2), '%',  sep='')
 ```
 
 ```{r}
 # Confusion matrix 
-conf_4 <- table(final_test$SelfPerceivedHealth, y_hats4)
-conf_4
+conf_5 <- table(final_test$SelfPerceivedHealth, y_hats5)
+conf_5
 
-confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats4))
+confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats5))
+```
+
+
+# Logistic Regression 
+
+#119 Variables 
+```{r}
+# Save data under new name
+Test <- final_test
+```
+
+## Train
+```{r}
+# Use cross validation to fit models
+trControl <- trainControl(method = "cv",
+                          number = 5)
+
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_all <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_All)
+
+summary(log_reg_all)
+```
+
+
+## Test
+```{r}
+# Predict on train data
+predicted__test <- stats::predict(log_reg_all, Test)
+
+# Run confusion matrix
+caret::confusionMatrix(predicted__test, as.factor(Test$SelfPerceivedHealth))
+```
+
+
+# Top 12 
+```{r}
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_12 <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_sub12)
+
+summary(log_reg_12) %>% pander()
+```
+
+## Test
+```{r}
+# Predict on train data
+predicted__test12 <- stats::predict(log_reg_12, Test)
+
+# Run confusion matrix
+caret::confusionMatrix(predicted__test12, as.factor(Test$SelfPerceivedHealth))
+```
+
+
+
+# Top 5 
+```{r}
+# Set seed
+set.seed(2023)
+
+# Create model with all variables as predictors
+log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ .,
+                     method = "glm",
+                     family = binomial(),
+                     trControl = trControl,
+                     metric = "Accuracy",
+                     data = Train_sub5)
+
+summary(log_reg_5) %>% pander()
+```
+
+## Test
+```{r}
+# Predict on train data
+predicted__test5 <- stats::predict(log_reg_5, Test)
+
+# Run confusion matrix
+caret::confusionMatrix(predicted__test5, as.factor(Test$SelfPerceivedHealth))
 ```
 
 
