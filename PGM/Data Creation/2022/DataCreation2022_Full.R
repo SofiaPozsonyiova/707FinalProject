@@ -1,6 +1,6 @@
-##########################
-# Data Processing (SP)   # 
-##########################
+###############################
+# Data Processing (SP) FULL   # 
+###############################
 
 # ----------------------- Reading in Data -----------------------
 
@@ -10,80 +10,225 @@ library(DataExplorer)
 library(ggplot2)
 
 # Reading in Provided Data and Saving Out
-# dat <- read.csv("/Users/sofiapozsonyiova/Desktop/PubR2019-race\ no\ county\ csv/PubR2019-race\ no\ county.csv")
-# save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet.RData")
+# dat <- read.table("/Users/sofiapozsonyiova/Downloads/MSS22-3CountyNoRaceCodebook/MSS22-3CountyNoRace.dat", header = TRUE,sep = "\t")
+# save(dat, file ="/Users/sofiapozsonyiova/Downloads/FullDataSet2022.RData")
 
 # Loading Data as Rdat for speed and efficiency 
 setwd("/Users/sofiapozsonyiova/Downloads/")
-load("SubsetDat.RData")
+load("FullDataSet2022.RData")
 
 
 #----------------------- Subsetting Data -----------------------
 
 # Extracting variables of interest based off of domain knowledge 
-dat_sub_named <- dat_sub %>% dplyr::select(P1,P2,Biosex,P5,P8,P11:P14a,P14ab1:P14ab14,P15:P17c,P18b:P18d,P20a:P20c,P20f:P22a,P22e,P23c,P23e,P25:P26h,P27b,P27c,P27e:P29e,P30:P39a,P40d,P41b:P41e,P41g:P42d,P45,P47a:P47e,P49d,P49a,P49c:P50d,P52a:P52c,P54a:P54b,P56a:P56c,P58a:P58c,P59:P66,P70a,P70c:P70d,P71a:P71d,P74,P76,P80c:P80g,P80i:P81,P86,FiveFV,Binge,Region) %>% mutate(SelfPerceivedHealth = as.factor(P28))
-
-# Setting variables to be factors
-col_names <- names(dat_sub_named)
-dat_sub_named[,col_names] <- lapply(dat_sub_named[,col_names] , factor)
-
-# QC:
-# str(dat_sub_named)
-
-#----------------------- Exploratory Analysis -----------------------
+# A39 = Self Perceived Health
+dat_sub <- dat %>% dplyr::select(A1,A2,biosex,A13,A15,A18,A21_inperson,A23A,A23C,A23D,A23E,A23F,A23G_inperson,A23H_inperson,A23i,A23J,A23K,A23L,A23M_inperson,A24,A25A,A25B,A25C,A26A,A26B,A26C,A27B,A27C,A27D,A30A,A30B,A30C,A30F,A30G,A30H,A31,A32A,A32E,A33C,A33E,A35,A36A,A36B,A36C,A36D,A36E,A36G,A36H,A36I,A38B,A38C,A38E,A38F,A38G,A42,A45,A46,A49,A50,A51A,A52D,A53B,A53C,A53D,A53E,A53H,A54C,A54D,A55,A56A,A56B,A56C,A56D,A56F,A58A,A58C,A58D,A58E,A58F,A58G,A58H,A58I,A58J,A58K,A58L,A58N,A58O,A58P,A58Q,A59A,A59B,A59C,A59D,A71,A72,A73,A74,A75,A76,A79A,A80C,A80D,A81D,A85,A88,A94,A99,FiveFV,Binge,A54A,A54B,A63A,A63B,A65A,A65B,A65C,A93C,A93D,A93E,A93F,A93G,A93I,A69,A70,A81A,A81B,A81C,A67A,A67B,A67C,A40A,A40B,A40C,A40D,A47A,A47B,A47C,A48A,A48B,A48C,A61A,A61B,A61C,A39,biosex) %>% rename(P1 = A1 ,
+                                    P2 = A2,
+                                    P8 = A13 ,
+                                    P11 = A15,
+                                    P13 = A18,
+                                    P14a = A21_inperson,
+                                    P14ab1 = A23A,
+                                    P14ab2 = A23C,
+                                    P14ab3 = A23D,
+                                    P14ab4 = A23E,
+                                    P14ab5 = A23F,
+                                    P14ab6 = A23G_inperson,
+                                    P14ab7 = A23H_inperson,
+                                    P14ab8 = A23i,
+                                    P14ab9 = A23J,
+                                    P14ab12 = A23K,
+                                    P14ab13 = A23L,
+                                    P14ab14 = A23M_inperson,
+                                    P15 = A24,
+                                    P16a = A25A,
+                                    P16b = A25B,
+                                    P16c = A25C,
+                                    P17a = A26A,
+                                    P17b = A26B,
+                                    P17c = A26C,
+                                    P18b = A27B,
+                                    P18c = A27C,
+                                    P18d = A27D,
+                                    P20a = A30A,
+                                    P20b = A30B,
+                                    P20c = A30C,
+                                    P20f = A30F,
+                                    P20g = A30G,
+                                    P20h = A30H,
+                                    P21 = A31,
+                                    P22a = A32A,
+                                    P22e = A32E,
+                                    P23c = A33C,
+                                    P23e = A33E,
+                                    P25 = A35,
+                                    P26a = A36A,
+                                    P26b = A36B,
+                                    P26c = A36C,
+                                    P26d = A36D,
+                                    P26e = A36E,
+                                    P26f = A36G,
+                                    P26g = A36H,
+                                    P26h = A36I,
+                                    P27b = A38B,
+                                    P27c = A38C,
+                                    P27e = A38E,
+                                    P27f = A38F,
+                                    P27g = A38G,
+                                    P30 = A42,
+                                    P33 = A45,
+                                    P34 = A46,
+                                    P37 = A49,
+                                    P38 = A50,
+                                    P39a = A51A,
+                                    P40d = A52D,
+                                    P41b = A53B,
+                                    P41c = A53C,
+                                    P41d = A53D,
+                                    P41e = A53E,
+                                    P41g = A53H,
+                                    P42c = A54C,
+                                    P42d = A54D,
+                                    P45 = A55,
+                                    P47a = A56A,
+                                    P47b = A56B,
+                                    P47c = A56C,
+                                    P47d = A56D,
+                                    P47e = A56F,
+                                    P49a = A58A,
+                                    P49c = A58C,
+                                    P49d = A58D,
+                                    P49e = A58E,
+                                    P49f = A58F,
+                                    P49g = A58G,
+                                    P49h = A58H,
+                                    P49i = A58I,
+                                    P49j = A58J,
+                                    P49k = A58K,
+                                    P49l = A58L,
+                                    P49n = A58N,
+                                    P49o = A58O,
+                                    P49p = A58P,
+                                    P49q = A58Q,
+                                    P50a = A59A,
+                                    P50b = A59B,
+                                    P50c = A59C,
+                                    P50d = A59D,
+                                    P61 = A71,
+                                    P62 = A72,
+                                    P63 = A73,
+                                    P64 = A74,
+                                    P65 = A75,
+                                    P66 = A76,
+                                    P70a = A79A,
+                                    P70c = A80C,
+                                    P70d = A80D,
+                                    P71d = A81D,
+                                    P74 = A85,
+                                    P76 = A88,
+                                    P81 = A94,
+                                    P86 = A99,
+                                    P42a = A54A,
+                                    P42b = A54B,
+                                    P54a = A63A,
+                                    P54b = A63B,
+                                    P56a = A65A,
+                                    P56b = A65B,
+                                    P56c = A65C,
+                                    P80c = A93C,
+                                    P80d = A93D,
+                                    P80e = A93E,
+                                    P80f = A93F,
+                                    P80g = A93G,
+                                    P80i = A93I,
+                                    P59 = A69,
+                                    P60 = A70,
+                                    P71a = A81A,
+                                    P71b = A81B,
+                                    P71c = A81C,
+                                    P58a = A67A,
+                                    P58b = A67B,
+                                    P58c = A67C,
+                                    P29a = A40A,
+                                    P29b = A40B,
+                                    P29c = A40C,
+                                    P29d = A40D,
+                                    P35a = A47A,
+                                    P35b = A47B,
+                                    P35c = A47C,
+                                    P36a = A48A,
+                                    P36b = A48B,
+                                    P36c = A48C,
+                                    P52a = A61A,
+                                    P52b = A61B,
+                                    P52c = A61C,
+                                    SelfPerceivedHealth = A39)
 
 # Visualizing Missing 
+# P76 
+# P70a
+dat_sub_named <- dat_sub %>% select(-c(P76,P70a)) 
 plot_missing(dat_sub_named)
 
-# Visualizing Each Distribution
-plot_bar(dat_sub_named)
+# per <- dat_sub %>%
+#   summarise(across(everything(), ~ mean(is.na(.)) * 100, .names = "perc_missing_{.col}"))
 
-# Visualizing Outcome 
-ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
-  geom_bar(fill = "cornflowerblue") +
-  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c('Excellent', 'Very good', 'Good', 'Fair','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
-# ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/selfperceivedhealth.png")
-
-#----------------------- Removing Missing  -----------------------
-
-# Comparing outcome variable if all na removed
+# Remove missingness:
 na_removed_dat <- na.omit(dat_sub_named)
-full_dat <- dat_sub_named
 
-# Comparing counts visually 
-plot_bar(full_dat$SelfPerceivedHealth)
+# Categorizing Health 
+na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,ifelse(SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1, NA)))  %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth)) 
+
 plot_bar(na_removed_dat$SelfPerceivedHealth)
-
-# Checking Proportions within outcome variable numerically 
 na_removed_dat %>%
   group_by(SelfPerceivedHealth) %>%
   summarise(cnt = n()) %>%
   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
   arrange(desc(freq))
-full_dat %>%
-  group_by(SelfPerceivedHealth) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
 
-# QC:
-# Proportions: 
-#    n     prop.full prop.red
-# 1	44576	  0.262	      0.233	
-# 2 61968	  0.364	      0.391	
-# 3	42768	  0.251	      0.269	
-# 4	12547	  0.074	      0.090		
-# 5	2431  	0.014       0.018	
-
+na_removed_dat <- na_removed_dat[!is.na(na_removed_dat$SelfPerceivedHealth), ]
+table(na_removed_dat$SelfPerceivedHealth)
 
 #----------------------- Combining and Redefining Variables  -----------------------
-
+# REDEFINING SELF PERCEIVED HEALTH
 # SelfPerceivedHealth (P28)    
 # 0 = Great Health 
 # 1 = Poor or Fair Health
 
-# 'Excellent', 'Very good', 'Good', 'Fair','Poor'
-na_removed_dat <- na_removed_dat %>% mutate(SelfPerceivedHealth = ifelse(SelfPerceivedHealth == 1 |SelfPerceivedHealth == 2, 0,ifelse(SelfPerceivedHealth == 3 |SelfPerceivedHealth == 4 | SelfPerceivedHealth == 5,1,NA))) 
+# 0 = '1 = Excellent', '2 = Very good' = GOOD HEALTH  
+# 1 = '4 = Fair','5 = Poor'= POOR HEALTH 
+# NA = '3 = Good'
+
+ggplot(data=na_removed_dat, aes(x=SelfPerceivedHealth)) +
+  geom_bar(fill = "cornflowerblue") +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1)+ scale_x_discrete(labels=c('Good','Poor'))+ xlab("Self-Perceived Health")+ylab("Count") + ggtitle("Counts of Self-Perceived Health")
+ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/selfperceivedhealthDic.png", height = 6.5, width = 4)
+
+
+# ggplot(data=na_removed_dat, aes(x=factor(Biosex, labels = c("Male", "Female")), fill = factor(SelfPerceivedHealth, labels = c("Good", "Poor")))) +
+#   geom_bar() +
+#   geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1) +
+#   scale_x_discrete(labels=c('Male','Female')) +
+#   xlab("Biological Sex") +
+#   ylab("Count") +
+#   ggtitle("Self-Perceived Health by Bio Sex") +
+#   facet_wrap(~factor(SelfPerceivedHealth, labels = c("Good", "Poor"))) +
+#   guides(fill = "none")
+# 
+# ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/SexBio.png", height = 6, width = 5)
+
+
+# ggplot(data=na_removed_dat, aes(x=P1, fill = SelfPerceivedHealth)) +
+#   geom_bar() +
+#   geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1) +
+#   scale_x_discrete(labels=c('8','9','11')) +
+#   xlab("Grade") +
+#   ylab("Count") +
+#   ggtitle("Self-Perceived Health by Grade")  +
+#   guides(fill = "none")+facet_wrap(~factor(SelfPerceivedHealth, labels = c("Good", "Poor")))
+
+# ggsave("/Users/sofiapozsonyiova/Documents/GitHub/707FinalProject/Grade.png", height = 6.2, width = 5.5)
+
 
 # QC:
 # na_removed_dat %>%
@@ -257,7 +402,7 @@ na_removed_dat <- na_removed_dat %>% mutate(ImprisGaurd = ifelse(P58a == 1 & (P5
 # 0 = No  
 # 1 = Yes 
 na_removed_dat <- na_removed_dat %>% mutate(DentalIssues = ifelse(P29a == 0 | P29b == 0|P29c == 0| P29d == 0,0,
-                                                                  ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1,1,NA))) %>% dplyr::select(-c(P29a:P29e))
+                                                                  ifelse(P29a == 1| P29b == 1|P29c == 1| P29d == 1,1,NA))) %>% dplyr::select(-c(P29a:P29d))
 
 # QC:
 # check <- dat_sub_named %>% na.omit() %>% dplyr::select(P29a:P29f)
@@ -320,7 +465,7 @@ na_removed_dat <- na_removed_dat %>% mutate(AlcDrugSelf = ifelse(P36a == 1 & (P3
 #   arrange(desc(freq))
 
 # Suicide
-# P52a	Have you ever seriously considered attempting suicide? No 
+# P52a	Have you ever seriously considered attempting suicide? No
 # P52b	Have you ever seriously considered attempting suicide? Yes, during the last year
 # P52c	Have you ever seriously considered attempting suicide? Yes, more than a year ago
 
@@ -337,8 +482,8 @@ na_removed_dat <- na_removed_dat %>% mutate(Suicide = ifelse(P52a == 1 & (P52b =
 
 # Setting variables to their proper form (i.e factor, numeric, ordinal, etc.)
 
-factor_vars <- na_removed_dat %>% dplyr::select(c(P1,P2,Biosex,P5,P8,P11,P12,P13,P14ab1,P14ab2,P14ab3,P14ab4,P14ab5,P14ab6,P14ab7,P14ab8,P14ab9,P14ab10,P14ab11,P14ab12,P14ab13,P14ab14,P25,P34,P38,P39a,P42c,P42d,P61:P66,FiveFV,Region,AbuseRelationship,SelfPerceivedHealth,Diab_Prediab,FosterCare,DrugFreq,AlcDrug_Residence,NicFreq,ImprisGaurd,DentalIssues,MentalHealthSelf,AlcDrugSelf,Suicide))
-numeric_vars <- na_removed_dat %>% dplyr::select(c(P14a,P15,P16a:P18d,P20a:P23e,P26a:P28,P30,P37,P40d:P41g,P45:P50d,P70a:P86,Binge))
+factor_vars <- na_removed_dat %>% dplyr::select(c(P1,P2,P8,P11,P13,P14ab1,P14ab2,P14ab3,P14ab4,P14ab5,P14ab6,P14ab7,P14ab8,P14ab9,P14ab12,P14ab13,P14ab14,P25,P34,P38,P39a,P42c,P42d,P61:P66,FiveFV,AbuseRelationship,SelfPerceivedHealth,Diab_Prediab,FosterCare,DrugFreq,AlcDrug_Residence,NicFreq,ImprisGaurd,DentalIssues,MentalHealthSelf,AlcDrugSelf,Suicide,biosex))
+numeric_vars <- na_removed_dat %>% dplyr::select(c(P14a,P15,P16a:P18d,P20a:P23e,P26a:P27g,P30,P37,P40d:P41g,P45:P50d,P70c:P86,Binge)) 
 
 fac_col_names <- names(factor_vars)
 num_col_names <- names(numeric_vars)
@@ -347,7 +492,6 @@ na_removed_dat[,fac_col_names] <- lapply(na_removed_dat[,fac_col_names] , as.fac
 
 na_removed_dat[,num_col_names] <- lapply(na_removed_dat[,num_col_names] , as.numeric)
 
-
 #----------------------- Splitting Data -----------------------
 # Splitting into final testing and validation set
 set.seed(707)
@@ -355,20 +499,35 @@ sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,
 
 # Final Test 
 final_test <- na_removed_dat[!sample, ]
+final_test <- final_test[!is.na(final_test$SelfPerceivedHealth), ]
 
 # Training 
 ModelDev  <- na_removed_dat[sample, ]
-sample2 <- sample(c(TRUE, FALSE), nrow(ModelDev), replace=TRUE, prob=c(0.70,0.30))
 
-## Splitting training further 
-Train <- ModelDev[sample2, ]
-Test <- ModelDev[!sample2, ]
+
+#----------------------- Balancing Data -----------------------
+# 1 0                   31359 0.624
+# 2 NA                  13506 0.269
+# 3 1                    5412 0.108
+
+grouped_data <- ModelDev %>%
+  group_by(SelfPerceivedHealth) %>%
+  mutate(size=n())
+
+grouped_data2 <-grouped_data  %>%
+  sample_n(size=5079,replace = TRUE) %>%
+  ungroup() 
+
+Train_Model_Dev_Balanced <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
+Train_Model_Dev_Balanced <- Train_Model_Dev_Balanced %>% select(-size)
+Train_Model_Dev_Balanced %>%
+  group_by(SelfPerceivedHealth) %>%
+  summarise(cnt = n()) %>%
+  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+  arrange(desc(freq))
 
 #----------------------- Saving out data  -----------------------
 
-# save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
-# save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/FinalTest.RData")
-# save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
-# save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")
-# save(ModelDev, file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev.RData")
+save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/FinalValidation_UnbalancedUSE.RData")
+save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/ModelDev_Train_BalancedUSE.RData")
 

@@ -44,10 +44,10 @@ library(infer)
 ```{r}
 # Loading in data from github
 # Training 
-load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/ModelDev_Train_BalancedUSE.RData")
 
 # Testing 
-load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/FinalValidation_UnbalancedUSE.RData")
 ```
 
 
@@ -57,21 +57,86 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalVal
 
 ```{r}
 # Selecting clusters that are needed 
-Train_All <- Train_Model_Dev_Balanced %>% select(-P28)
+Train_All <- Train_Model_Dev_Balanced 
+
+factor_vars <- Train_All %>% dplyr::select(c(-SelfPerceivedHealth))
+fac_col_names <- names(factor_vars)
+
+Train_All[,fac_col_names] <- lapply(Train_All[,fac_col_names] , as.numeric)
+Train_All <- Train_All %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth))
 ```
 
 ### Training: All Variables Included  
-```{r cache = TRUE}
+```{r}
+repeat_cv <- trainControl(method='cv', number=5)
+## Set seed for reproducibility
+set.seed(2023)
+
+## Train a random forest model
+forest <- train(
+        
+        # Formula. We are using all variables to predict Species
+        SelfPerceivedHealth~., 
+        
+        # Source of data; remove the Species variable
+        data=Train_All, 
+        
+        # `rf` method for random forest
+        method='rf', 
+        
+        # Add repeated cross validation as trControl
+        trControl=repeat_cv,
+        tuneGrid = data.frame(mtry = c(12)),
+        # Accuracy to measure the performance of the model
+        metric='Accuracy')
+
+## Print out the details about the model
+forest_model <- forest
+
+# Get variable importance as a data frame
+var_imp <- data.frame(importance(forest_model, type = 1))
+
+# Add variable names as a new column
+var_imp$variable <- rownames(var_imp)
+
+# Order variable importance by decreasing order
+var_imp <- var_imp[order(var_imp$MeanDecreaseGini, decreasing = TRUE), ]
+
+# Map variable indices to their names
+var_imp$variable <- names(Train_All)[-1][as.numeric(var_imp$variable)]
+
+# Print variable importance
+print(var_imp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Initializing Random Forest
 forest_modelAll <- train(
   SelfPerceivedHealth ~ ., 
   data = Train_All,
   method = "rf",
-  tuneGrid = data.frame(mtry = c(2,12,63,126)),
+  tuneGrid = data.frame(mtry = c(12)),
   trControl = trainControl(method = "cv",number = 5),
   metric = "Accuracy",
-  na.action = na.omit,
-  seed = 2023)
+  na.action = na.omit)
+
 ```
 
 ```{r}

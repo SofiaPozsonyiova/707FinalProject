@@ -48,6 +48,11 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev
 
 # Testing 
 load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalValidation_UnbalancedUSE.RData")
+
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/ModelDev_Train_BalancedUSE.RData")
+
+# Testing 
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/FinalValidation_UnbalancedUSE.RData")
 ```
 
 
@@ -57,7 +62,7 @@ load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FinalVal
 
 ```{r}
 # Selecting clusters that are needed 
-Train_All <- Train_Model_Dev_Balanced %>% select(-P28)
+Train_All <- Train_Model_Dev_Balanced 
 ```
 
 Cross Validation v. OOB 
@@ -76,10 +81,12 @@ forest_modelAll <- train(
   SelfPerceivedHealth ~ ., 
   data = Train_All,
   method = "rf",
-  tuneGrid = data.frame(mtry = c(2,12,63,126)),
-  trControl = trainControl(method = "cv",number = 10),
+  tuneGrid = data.frame(mtry = c(12)),
+  trControl = trainControl(method = "cv",number = 5),
   metric = "Accuracy",
   na.action = na.omit)
+
+
 ```
 
 ```{r}
