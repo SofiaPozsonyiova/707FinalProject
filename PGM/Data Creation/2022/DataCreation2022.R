@@ -45,46 +45,45 @@ table(na_removed_dat$SelfPerceivedHealth,na_removed_dat$Biosex)
 
 #----------------------- Splitting Data -----------------------
 # Splitting into final testing and validation set
-set.seed(707)
-sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,0.2))
+# set.seed(707)
+# sample <- sample(c(TRUE, FALSE), nrow(na_removed_dat), replace=TRUE, prob=c(0.8,0.2))
 
-# Final Test 
-final_test <- na_removed_dat[!sample, ]
-final_test <- final_test[!is.na(final_test$SelfPerceivedHealth), ]
-
-# Training 
-ModelDev  <- na_removed_dat[sample, ]
+# # Final Test 
+# final_test <- na_removed_dat[!sample, ]
+# final_test <- final_test[!is.na(final_test$SelfPerceivedHealth), ]
+# 
+# # Training 
+# ModelDev  <- na_removed_dat[sample, ]
 
 #----------------------- Balancing Data -----------------------
 # 1 0                   31359 0.624
 # 2 NA                  13506 0.269
 # 3 1                    5412 0.108
 
-grouped_data <- ModelDev %>%
-  group_by(SelfPerceivedHealth) %>%
-  mutate(size=n())
-
-grouped_data2 <-grouped_data  %>%
-  sample_n(size= 8572,replace = TRUE) %>%
-  ungroup() 
-
-Train_Model_Dev_Balanced2022 <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
-Train_Model_Dev_Balanced2022 <- Train_Model_Dev_Balanced2022 %>% select(-size)
-Train_Model_Dev_Balanced2022 %>%
-  group_by(SelfPerceivedHealth) %>%
-  summarise(cnt = n()) %>%
-  mutate(freq = round(cnt / sum(cnt), 3)) %>% 
-  arrange(desc(freq))
-
+# grouped_data <- ModelDev %>%
+#   group_by(SelfPerceivedHealth) %>%
+#   mutate(size=n())
+# 
+# grouped_data2 <-grouped_data  %>%
+#   sample_n(size= 8572,replace = TRUE) %>%
+#   ungroup() 
+# 
+# Train_Model_Dev_Balanced2022 <- grouped_data2[!is.na(grouped_data2$SelfPerceivedHealth), ]
+# Train_Model_Dev_Balanced2022 <- Train_Model_Dev_Balanced2022 %>% select(-size)
+# Train_Model_Dev_Balanced2022 %>%
+#   group_by(SelfPerceivedHealth) %>%
+#   summarise(cnt = n()) %>%
+#   mutate(freq = round(cnt / sum(cnt), 3)) %>% 
+#   arrange(desc(freq))
+# 
 
 # Logistic Regression 
 library(tidyverse)
 library(caret)
-library(InformationValue)
 library(pander)
 library(lmtest)
 
-load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/ModelDev_Train_BalancedUSE.RData")
+save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FULL2022_Subset.RData")
 
 
 # Set seed

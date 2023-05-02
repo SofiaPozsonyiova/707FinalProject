@@ -527,7 +527,7 @@ Train_Model_Dev_Balanced %>%
   arrange(desc(freq))
 
 #----------------------- Saving out data  -----------------------
-
+save(na_removed_dat,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/FULL2022.RData")
 save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/FinalValidation_UnbalancedUSE.RData")
 save(Train_Model_Dev_Balanced,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/2022/ModelDev_Train_BalancedUSE.RData")
 

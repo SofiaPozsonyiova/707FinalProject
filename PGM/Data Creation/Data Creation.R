@@ -365,8 +365,8 @@ Train <- ModelDev[sample2, ]
 Test <- ModelDev[!sample2, ]
 
 #----------------------- Saving out data  -----------------------
-
-# save(na_removed_dat,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
+Full2019 <- na_removed_dat
+save(Full2019,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
 # save(final_test,file = "/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/FinalTest.RData")
 # save(Train,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Train.RData")
 # save(Test,file ="/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/ModelDev_Test.RData")

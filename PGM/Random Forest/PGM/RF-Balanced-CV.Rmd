@@ -400,95 +400,49 @@ confusionMatrix(table(final_test$SelfPerceivedHealth, y_hats5))
 
 
 # Logistic Regression 
-
-#119 Variables 
 ```{r}
-# Save data under new name
-Test <- final_test
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/Balanced/FULL2022_Subset.RData")
+load("/Users/sofiapozsonyiova/Documents/GitHub/Private707/data/SubsetDat.RData")
+
+
+factor_varsTEST <- Full2019 %>% dplyr::select(c(-SelfPerceivedHealth))
+fac_col_namesTEST  <- names(factor_varsTEST)
+
+Full2019[,fac_col_namesTEST] <- lapply(Full2019[,fac_col_namesTEST] , as.numeric)
+Full2019 <- Full2019 %>% mutate(SelfPerceivedHealth = as.factor(SelfPerceivedHealth))
+
+glimpse(Full2019)
+
+Train_sub5 <- Train %>% select(-P28) %>% dplyr::select(c(P49f,P49a,P50b,P37,P49l,SelfPerceivedHealth))
 ```
 
-## Train
 ```{r}
-# Use cross validation to fit models
+set.seed(2023)
+
+# Create model with all variables as predictors
 trControl <- trainControl(method = "cv",
                           number = 5)
-
-# Set seed
-set.seed(2023)
-
-# Create model with all variables as predictors
-log_reg_all <- train(as.factor(SelfPerceivedHealth) ~ .,
-                     method = "glm",
-                     family = binomial(),
-                     trControl = trControl,
-                     metric = "Accuracy",
-                     data = Train_All)
-
-summary(log_reg_all)
-```
-
-
-## Test
-```{r}
-# Predict on train data
-predicted__test <- stats::predict(log_reg_all, Test)
-
-# Run confusion matrix
-caret::confusionMatrix(predicted__test, as.factor(Test$SelfPerceivedHealth))
-```
-
-
-# Top 12 
-```{r}
-# Set seed
-set.seed(2023)
-
-# Create model with all variables as predictors
-log_reg_12 <- train(as.factor(SelfPerceivedHealth) ~ .,
-                     method = "glm",
-                     family = binomial(),
-                     trControl = trControl,
-                     metric = "Accuracy",
-                     data = Train_sub12)
-
-summary(log_reg_12) %>% pander()
-```
-
-## Test
-```{r}
-# Predict on train data
-predicted__test12 <- stats::predict(log_reg_12, Test)
-
-# Run confusion matrix
-caret::confusionMatrix(predicted__test12, as.factor(Test$SelfPerceivedHealth))
-```
-
-
-
-# Top 5 
-```{r}
-# Set seed
-set.seed(2023)
-
-# Create model with all variables as predictors
-log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ .,
-                     method = "glm",
-                     family = binomial(),
-                     trControl = trControl,
-                     metric = "Accuracy",
-                     data = Train_sub5)
+log_reg_5 <- train(as.factor(SelfPerceivedHealth) ~ P49f+P49a+P50b+P37+P49l,
+                   method = "glm",
+                   family = binomial(),
+                   trControl = trControl,
+                   metric = "Accuracy",
+                   data = Full2019)
 
 summary(log_reg_5) %>% pander()
-```
 
-## Test
-```{r}
+# Get odds ratios for all coefficients
+exp(coef(log_reg_5$finalModel))
+
+# Get confidence intervals
+exp(confint(log_reg_5$finalModel))
+
 # Predict on train data
-predicted__test5 <- stats::predict(log_reg_5, Test)
+predicted_5 <- stats::predict(log_reg_5, na_removed_dat)
+predicted_5
 
 # Run confusion matrix
-caret::confusionMatrix(predicted__test5, as.factor(Test$SelfPerceivedHealth))
+caret::confusionMatrix(predicted_5, as.factor(na_removed_dat$SelfPerceivedHealth))
+
 ```
-
-
 
